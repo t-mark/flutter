@@ -117,7 +117,7 @@ if (!(is_user_logged_in() && current_user_can('edit_posts')))
 				
 			window.parent.parent.document.getElementById("<?php echo $_GET["input_name"]?>").value = requiredString;
 			
-			requiredString = "<?php echo PHPTHUMB.'?src='.FLUTTER_URI.'files_flutter/' ?>" + requiredString; 
+			requiredString = "<?php echo PHPTHUMB.'?src=../../files_flutter/' ?>" + requiredString; 
 
 			document.getElementById('tempSrc').value = requiredString;
 			window.parent.parent.exchangeValues(requiredString, document.getElementById('imageThumbId').value); 

@@ -174,10 +174,10 @@ function get_image ($fieldName, $groupIndex=1, $fieldIndex=1,$tag_img=1) {
 
 
 	if (empty($fieldObject->properties['params']) && (FALSE == strstr($fieldValue, "&"))){
-		$fieldValue = FLUTTER_URI.'files_flutter/'.$fieldValue; 
+		$fieldValue = '../../files_flutter/'.$fieldValue; 
 	}
 	else{
-        $path = FLUTTER_URI."files_flutter/";
+        $path = "../../files_flutter/";
 		$fieldValue = $path.$fieldValue.$fieldObject->properties['params'];
 	}
         

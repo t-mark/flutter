@@ -1324,14 +1324,14 @@ class RCCWP_WritePostPage
 			$customFieldId = $customField->id;
 			$value = RCCWP_CustomField::GetCustomFieldValues(true, $_REQUEST['post'], $customField->name, $groupCounter, $fieldCounter);
 
-            $path = PHPTHUMB."?src=".FLUTTER_URI."files_flutter/";
+            $path = PHPTHUMB."?src=../../files_flutter/";
 			$valueRelative = $value;
 			$value = $path.$value;
 			if(!(strpos($value, 'http') === FALSE))
 				$hidValue = str_replace('"', "'", $valueRelative);
 			$value = stripslashes(trim("\<img src=\'".$value."\' class=\"freshout\" \/\>"));
 		} else if( !empty($customField->value)){
-            $path = PHPTHUMB."?src=".FLUTTER_URI."files_flutter/";
+            $path = PHPTHUMB."?src=../../files_flutter/";
             $valueRelative = $customField->value;
             $value  = $path.$customField->value;
 

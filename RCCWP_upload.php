@@ -101,7 +101,7 @@ if (isset($_POST['fileframe']))
 			//Set image
 			<?php
 				//$newImagePath = FLUTTER_URI.'phpThumb.php
-                $newImagePath = PHPTHUMB.'?&w=150&h=120&src='.FLUTTER_URI.'files_flutter/'.$filename;
+                $newImagePath = PHPTHUMB.'?&w=150&h=120&src=../../files_flutter/'.$filename;
 				include_once("RCCWP_WritePostPage.php") ;
 				$edit_anchor = RCCWP_WritePostPage::snipshot_anchor($newImagePath) ;
 				if (isset($_POST['imageThumbID'])){ 
