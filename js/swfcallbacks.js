@@ -21,7 +21,7 @@ jQuery(document).ready(function(){
            		                	flash_url :  wp_root+"/wp-includes/js/swfupload/swfupload.swf",
                                     file_size_limit : "20 MB",
                                     button_placeholder_id : "upload-"+file,
-                                    debug: true,
+                                    debug: false,
 
                                     //custom settings
                                     custom_settings :{
