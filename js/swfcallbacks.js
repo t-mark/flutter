@@ -17,11 +17,11 @@ jQuery(document).ready(function(){
                    
                                     
                                     //requeriments settings
-                                    upload_url  : wp_root+"/wp-content/plugins/Flutter/RCCWP_GetFile.php",
+                                    upload_url  : flutter_path + "/RCCWP_GetFile.php",
            		                	flash_url :  wp_root+"/wp-includes/js/swfupload/swfupload.swf",
                                     file_size_limit : "20 MB",
                                     button_placeholder_id : "upload-"+file,
-                                    debug: false,
+                                    debug: true,
 
                                     //custom settings
                                     custom_settings :{
