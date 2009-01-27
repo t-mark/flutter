@@ -336,7 +336,7 @@ class RCCWP_Menu
 
 		
 		
-		if($wp_version < 2.7 ){
+		if($wp_version < 2.7){
 			
 			$add_post =  false;
 			foreach ($customWritePanels as $panel)

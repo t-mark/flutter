@@ -30,22 +30,29 @@ class RCCWP_Processor
 			case 'finish-create-custom-write-panel':
 				include_once('RCCWP_CustomWritePanel.php');
 					
+				$default_theme_page=NULL;
+				if($_POST['radPostPage'] == 'page'){ $default_theme_page = $_POST['page_template']; }
+				
 				$customWritePanelId = RCCWP_CustomWritePanel::Create(
 					$_POST['custom-write-panel-name'],
 					$_POST['custom-write-panel-description'],
 					$_POST['custom-write-panel-standard-fields'],
 					$_POST['custom-write-panel-categories'],
 					$_POST['custom-write-panel-order'],
-                    FALSE,
-                    true,
-                    $_POST['single']
-                    );
+					FALSE,
+					true,
+					$_POST['single'],
+					$default_theme_page
+				);
 
 				wp_redirect(RCCWP_ManagementPage::GetCustomWritePanelGenericUrl('view-custom-write-panel', $customWritePanelId));
 				break;
 				
 			case 'submit-edit-custom-write-panel':
 				include_once('RCCWP_CustomWritePanel.php');
+				
+				$default_theme_page=NULL;
+				if($_POST['radPostPage'] == 'page'){ $default_theme_page = $_POST['page_template']; }
 
 				RCCWP_CustomWritePanel::Update(
 					$_POST['custom-write-panel-id'],
@@ -53,8 +60,12 @@ class RCCWP_Processor
 					$_POST['custom-write-panel-description'],
 					$_POST['custom-write-panel-standard-fields'],
 					$_POST['custom-write-panel-categories'],
-					$_POST['custom-write-panel-order']
-                );
+					$_POST['custom-write-panel-order'],
+					FALSE,
+					true,
+					$_POST['single'],
+					$default_theme_page
+				);
 				
 				RCCWP_CustomWritePanel::AssignToRole($_POST['custom-write-panel-id'], 'administrator');
 				break;

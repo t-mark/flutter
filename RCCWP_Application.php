@@ -583,28 +583,37 @@ class RCCWP_Application
 		if (!empty($_GET['page']) && stripos($_GET['page'], "flutter") === false && $_GET['page'] != "RCCWP_OptionsPage.php" && !isset($_GET['custom-write-panel-id'])) return;
 		
 		$dir_list = "";
+		$dir_list2 = "";
 		//if(!is_dir(FLUTTER_UPLOAD_FILES_DIR)){
 		//	copy(dirname(__FILE__).DIRECTORY_SEPARATOR."files_flutter2/", FLUTTER_UPLOAD_FILES_DIR);
 		//	mkdir('files_flutter', 0777);
 		//	@chmod(FLUTTER_UPLOAD_FILES_DIR, 777);
 		//}
-
-		if (!is_writable(FLUTTER_IMAGES_CACHE_DIR)){
+		if (!is_dir(FLUTTER_IMAGES_CACHE_DIR)){
+			$dir_list2.= "<li>".FLUTTER_IMAGES_CACHE_DIR . "</li>";
+		}elseif (!is_writable(FLUTTER_IMAGES_CACHE_DIR)){
 			$dir_list.= "<li>".FLUTTER_IMAGES_CACHE_DIR . "</li>";
 		}
 
-		if (!is_writable(FLUTTER_UPLOAD_FILES_DIR)){
+		if (!is_dir(FLUTTER_UPLOAD_FILES_DIR)){
+			$dir_list2.= "<li>".FLUTTER_UPLOAD_FILES_DIR . "</li>";
+		}elseif (!is_writable(FLUTTER_UPLOAD_FILES_DIR)){
 			$dir_list.= "<li>".FLUTTER_UPLOAD_FILES_DIR . "</li>";
 		}
 
-
-		if (!is_writable(FLUTTER_MODULES_DIR)){
+		if (!is_dir(FLUTTER_MODULES_DIR)){
+			$dir_list2.= "<li>".FLUTTER_MODULES_DIR . "</li>";
+		}elseif (!is_writable(FLUTTER_MODULES_DIR)){
 			$dir_list.= "<li>".FLUTTER_MODULES_DIR . "</li>";
 		}
 
 
         //@todo add the   tmp folder
-
+		if ($dir_list2 != ""){
+			echo "<div id='flutter-install-error-message' class='error'><p><strong>".__('Flutter is not ready yet.', $flutter_domain)."</strong> ".__('must create the following folders (and must be writable):', $flutter_domain)."</p><ul>";
+			echo $dir_list2;
+			echo "</ul></div>";
+		}
 		if ($dir_list != ""){
 			echo "<div id='flutter-install-error-message' class='error'><p><strong>".__('Flutter is not ready yet.', $flutter_domain)."</strong> ".__('The following folders must be writable (usually chmod 777 is neccesary):', $flutter_domain)."</p><ul>";
 			echo $dir_list;

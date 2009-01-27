@@ -11,7 +11,10 @@ class RCCWP_WritePostPage
 
 	function ApplyCustomWritePanelAssignedCategories($content){ 
 		global $CUSTOM_WRITE_PANEL;
+		global $post,$title;
+		
 		$assignedCategoryIds = RCCWP_CustomWritePanel::GetAssignedCategoryIds($CUSTOM_WRITE_PANEL->id);
+		$customThemePage = RCCWP_CustomWritePanel::GetThemePage($CUSTOM_WRITE_PANEL->name);
 		
 		//hide all categories
 		$all = get_categories( "get=all" );
@@ -46,8 +49,14 @@ class RCCWP_WritePostPage
 			$content = str_replace($toReplace, $replacement, $content);
 		}
 		
-		echo wp_list_categories();
-		echo "clau";
+		//set default theme page
+		if($post->ID == 0){
+			$toReplace = "value='".$customThemePage."'";
+			$replacement = "value='".$customThemePage."'" . ' SELECTED"';
+			$content = str_replace($toReplace, $replacement, $content);
+		}
+		
+		
 		return $content;
 	}
 

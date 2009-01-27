@@ -59,7 +59,7 @@ class RCCWP_CustomWritePanel
 	 * @param boolean $createDefaultGroup indicates whether to create a default group.
 	 * @return the id of the write panel
 	 */
-	function Create($name, $description = '', $standardFields = array(), $categories = array(), $display_order = 1, $type = FALSE, $createDefaultGroup=true,$single_post = 0)
+	function Create($name, $description = '', $standardFields = array(), $categories = array(), $display_order = 1, $type = FALSE, $createDefaultGroup=true,$single_post = 0, $default_theme_page)
 	{
 		include_once('RC_Format.php');
 		global $wpdb;
@@ -116,6 +116,16 @@ class RCCWP_CustomWritePanel
 			RCCWP_CustomGroup::Create($customWritePanelId, '__default', false, false);
 		}
 		
+		if($default_theme_page){
+			$theme_key="t_".$name;
+			$sql = "INSERT INTO ". $wpdb->postmeta .
+								" (meta_key, meta_value) ".
+								" VALUES ('".$theme_key."', '".$default_theme_page."')";
+			$wpdb->query($sql);
+			
+			
+		}
+		
 		RCCWP_CustomWritePanel::AssignToRole($customWritePanelId, 'administrator');
 		
 		return $customWritePanelId;
@@ -169,12 +179,31 @@ class RCCWP_CustomWritePanel
 	{
 		global $wpdb;
 	
-		$sql = "SELECT id, name, description, display_order, capability_name, type FROM " . RC_CWP_TABLE_PANELS .
+		$sql = "SELECT id, name, description, display_order, capability_name, type,single FROM " . RC_CWP_TABLE_PANELS .
 			" WHERE id = " . (int)$customWritePanelId;
 		
 		$results = $wpdb->get_row($sql);
 		
 		return $results;
+	}
+	
+	/**
+	 * Get the properties of a write panel
+	 *
+	 * @param unknown_type $customWritePanelId
+	 * @return an object containing the properties of the write panel which are
+	 * 			id, name, description, display_order, capability_name, type
+	 */
+	function GetThemePage($customWritePanelName)
+	{
+		global $wpdb;
+	
+		$sql = "SELECT meta_value FROM " . $wpdb->postmeta . 
+						" WHERE meta_key = 't_".$customWritePanelName."' AND post_id = 0" ;
+		
+		$results = $wpdb->get_row($sql);
+		
+		return $results->meta_value;
 	}
 	
 	/**
@@ -306,7 +335,7 @@ class RCCWP_CustomWritePanel
 	 * @param integer $display_order the order of the panel in Flutter > Write Panels tab
 	 * @param string $type 'post' or 'page'
 	 */
-	function Update($customWritePanelId, $name, $description = '', $standardFields = array(), $categories = array(), $display_order = 1)
+	function Update($customWritePanelId, $name, $description = '', $standardFields = array(), $categories = array(), $display_order = 1, $type = FALSE, $createDefaultGroup=true,$single_post = 0, $default_theme_page)
 	{
 		include_once('RC_Format.php');
 		global $wpdb;
@@ -320,12 +349,14 @@ class RCCWP_CustomWritePanel
 			" , display_order = %d" .
 			" , capability_name = %s" .
 			" , type = %s" .
+			" , single = %s" .
 			" where id = %d",
 			RC_Format::TextToSql($name), 
 			RC_Format::TextToSql($description),
 			$display_order,
 			RC_Format::TextToSql($capabilityName),
 			RC_Format::TextToSql($_POST['radPostPage']),
+			$single_post,
 			$customWritePanelId );
 		
 		$wpdb->query($sql);
@@ -417,6 +448,17 @@ class RCCWP_CustomWritePanel
 				
 				$wpdb->query($sql);
 			}
+		}
+		
+		if($default_theme_page){
+			$theme_key="t_".$name;
+			$sql = "UPDATE ". $wpdb->postmeta .
+				" SET meta_value = '".$default_theme_page."' ".
+				" WHERE meta_key = '".$theme_key."' AND post_id = '0' ";
+				
+			$wpdb->query($sql);
+			
+			
 		}
 	
 	}

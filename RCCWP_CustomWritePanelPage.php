@@ -5,11 +5,13 @@ class RCCWP_CustomWritePanelPage
 {
 	function Content($customWritePanel = null)
 	{
-		global $flutter_domain;
+		global $flutter_domain,$wpdb;
 		$customWritePanelName = "";
 		$customWritePanelDescription = "";
 		$write_panel_category_ids = array();
 		$defaultTagChecked = 'checked="checked"';
+		$customWritePanelAllFieldIds = NULL;
+		$customThemePage = NULL;
 		$showPost = true;
 		if ($customWritePanel != null)
 		{
@@ -20,6 +22,12 @@ class RCCWP_CustomWritePanelPage
 			if ($customWritePanelType == 'page') $showPost = false;
 			$customWritePanelCategoryIds = RCCWP_CustomWritePanel::GetAssignedCategoryIds($customWritePanel->id);
 			$customWritePanelStandardFieldIds = RCCWP_CustomWritePanel::GetStandardFields($customWritePanel->id);
+			$customWritePanelAllFieldIds = RCCWP_CustomWritePanel::Get($customWritePanel->id);
+			
+			if ($customWritePanelType == 'page'){
+				$customThemePage = RCCWP_CustomWritePanel::GetThemePage($customWritePanel->name); }
+			
+			
 			$defaultTagChecked = '';
 			?>
 			<input type="hidden" name="custom-write-panel-id" value="<?php echo $customWritePanel->id?>" />
@@ -67,7 +75,7 @@ class RCCWP_CustomWritePanelPage
 		</tr>
 
 	
-		<tr valign="top"  id="catText">
+		<tr valign="top"  id="catText" class="flutter_forpost">
 			<th scope="row"  align="right"><div id="catLabel" style="display:inline;"><?php _e('Assigned Categories', $flutter_domain); ?>:</div></th>
 			<td>
 				
@@ -91,11 +99,44 @@ class RCCWP_CustomWritePanelPage
 				
 			</td>
 		</tr>
+		
+		<tr valign="top"  id="catText" class="flutter_forpage">
+			<th scope="row"  align="right"><div id="catLabel" style="display:inline;"><?php _e('Assigned Theme', $flutter_domain); ?>:</div></th>
+			<td>
+				
+				<select name="page_template" id="page_template">
+					<option value='default'><?php _e('Default Template'); ?></option>
+					<?php $themes_defaults = get_page_templates();
+					foreach($themes_defaults as $v => $k) {
+						if ($customWritePanelType == 'page'){
+							$theme_select=NULL;
+							if($customThemePage == $k){ $theme_select='SELECTED';}
+						}?>
+					<option value='<?=$k?>' <?=$theme_select?> ><?=$v?></option>
+					<?php } ?>
+					<?php  ?>
+				</select>
+		
+			</td>
+		</tr>
+		
         <tr>
             <th><?php _e('Quantity',$flutter_domain);?></th>
             <td>
-				<input type="radio" name="single" id="radPostPage" value="1"   /> <strong><?php _e('Single', $flutter_domain); ?> </strong> &nbsp; &nbsp; &nbsp; 
-				<input type="radio" name="single" id="radPostPage" value="0" checked="checked"  /> <strong><?php _e('Multiple', $flutter_domain); ?></strong>
+				<?php if(isset($customWritePanel->id) && !empty($customWritePanel->id))
+					{
+						if ($customWritePanelAllFieldIds->single == 0)
+						{
+							$multiple_checked="checked=\"checked\"";
+						}else{
+							$single_checked="checked=\"checked\"";
+						}
+					}else{
+						$multiple_checked="checked=\"checked\"";
+					}
+				?>
+				<input type="radio" name="single" id="radPostPage" value="1" <?=$single_checked?>  /> <strong><?php _e('Single', $flutter_domain); ?> </strong> &nbsp; &nbsp; &nbsp; 
+				<input type="radio" name="single" id="radPostPage" value="0" <?=$multiple_checked?>  /> <strong><?php _e('Multiple', $flutter_domain); ?></strong>
              </td>
         </tr>
 
