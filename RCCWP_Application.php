@@ -269,7 +269,7 @@ class RCCWP_Application
 				type tinyint NOT NULL,
 				CSS varchar(100),
 				required_field tinyint,
-				duplicate boolean NOT NULL,
+				duplicate tinyint(1) NOT NULL,
 				PRIMARY KEY (id) )";
 				
 			$qst_tables[] = "CREATE TABLE " . RC_CWP_TABLE_CUSTOM_FIELD_OPTIONS . " (
@@ -305,8 +305,8 @@ class RCCWP_Application
 				id int(11) NOT NULL auto_increment,
 				panel_id int(11) NOT NULL,
 				name varchar(50) NOT NULL,
-				duplicate boolean NOT NULL,
-				at_right boolean NOT NULL,
+				duplicate tinyint(1) NOT NULL,
+				at_right tinyint(1) NOT NULL,
 				PRIMARY KEY (id) )";
 
             $qst_tables[] = "CREATE TABLE ".FLUTTER_TABLE_MODULES_DUPLICATES." (
