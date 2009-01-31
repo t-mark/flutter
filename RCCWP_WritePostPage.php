@@ -734,7 +734,7 @@ class RCCWP_WritePostPage
 					</h3>
 				<?php } ?>  -->	
 		<?php } else { ?>
-<!-- 			<div id="freshpostdiv_group_<?php echo $customGroup->id.'_'.$groupCounter;?>" class="postbox">
+ 			<div id="freshpostdiv_group_<?php echo $customGroup->id.'_'.$groupCounter;?>" class="postbox1"> <!--
 				<?php if ($fromAjax){ ?>
 				<h3 onclick="jQuery(jQuery(this).parent().get(0)).toggleClass('closed');"> <a class="togbox">+</a>
 				<?php }else{ ?>
@@ -808,7 +808,7 @@ class RCCWP_WritePostPage
 				<a class ="duplicate_button" href="javascript:deleteGroupDuplicate('freshpostdiv_group_<?php echo $customGroup->id.'_'.$groupCounter ?>')" > 
 					<img class="duplicate_image"  src="<?php echo FLUTTER_URI; ?>images/delete.png" alt="<?php _e('Remove field duplicate', $flutter_domain); ?>"/><?php _e('Remove Group', $flutter_domain); ?>
 				</a>
-				<br style="height:2px"/>
+				<br style="height:2px"/></div>
 			<?php }
 		}
 		?>
