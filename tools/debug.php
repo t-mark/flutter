@@ -15,7 +15,7 @@ class Debug{
      *  @var $string  message 
      *  @author David Valdez  <david@freshout.us>
      */
-     public static function log($msg,$path = "") {
+     function log($msg,$path = "") {
          if(empty($path)){
             $path = dirname(__FILE__)."/../tmp/debug/";
          }
