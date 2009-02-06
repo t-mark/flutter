@@ -4,7 +4,7 @@ Plugin Name: Flutter
 Plugin URI: http://flutter.freshout.us/
 Description: Create custom write panels and easily retrieve their values in your templates.
 Author: Freshout
-Version: .2.42
+Version: .2.48
 Author URI: http://freshout.us
 */
 
@@ -58,7 +58,6 @@ require_once 'RCCWP_CustomWriteModule.php';
 require_once 'RCCWP_CustomWritePanel.php';
 
 // Include files containing Flutter public functions
-//require_once 'canvas-core.php';
 require_once 'get-custom.php';
 
 // Include other files used in this script
@@ -74,8 +73,8 @@ else
 	$is_wordpress_mu=false;
 	
  /* function for languajes
-     *
-     */
+  *
+  */
 global $flutter_domain;
 $flutter_domain = 'flutter';	
 load_plugin_textdomain($flutter_domain, '/'.PLUGINDIR.'/'.dirname(plugin_basename(__FILE__)).'/languajes', basename(dirname(__FILE__)).'/languages');

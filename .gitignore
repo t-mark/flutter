@@ -2,3 +2,4 @@ tmp/
 modules/
 files_flutter/
 cache/
+*.log
