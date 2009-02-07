@@ -8,7 +8,6 @@ class RCCWP_Post
         		
 		if (!current_user_can('edit_post', $postId))
 			return $postId;
-		
 		RCCWP_Post::SetCustomWritePanel($postId);
 		RCCWP_Post::PrepareFieldsValues($postId);
 		RCCWP_Post::SetMetaValues($postId);
@@ -21,9 +20,7 @@ class RCCWP_Post
 	 * Attach a custom write panel to the current post by saving the custom write panel id
 	 * as a meta value for the post
 	 */
-	function SetCustomWritePanel($postId)
-	{
-		
+	function SetCustomWritePanel($postId) {
 		$customWritePanelId = $_POST['rc-cwp-custom-write-panel-id'];
 		if (isset($customWritePanelId))
 		{

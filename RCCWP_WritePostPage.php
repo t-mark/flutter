@@ -90,6 +90,9 @@ class RCCWP_WritePostPage
 					
 		</style>
 
+        <!-- Live Query Jquery plugin -->
+        <script  type="text/javascript" src="<?php echo FLUTTER_URI?>js/jquery.livequery.js"></script>
+
 		<script language="JavaScript" type="text/javascript" src="<?php echo FLUTTER_URI; ?>js/prototype.js"></script>
 		
 		<!-- Calendar Control -->
@@ -109,6 +112,8 @@ class RCCWP_WritePostPage
 		<script type="text/javascript" src="<?php echo FLUTTER_URI?>js/greybox/gb_scripts.js"></script>
 		<script type="text/javascript" src="<?php echo FLUTTER_URI; ?>js/swfcallbacks.js" ></script>
 		<script type="text/javascript" src="<?php echo get_bloginfo('wpurl');?>/wp-includes/js/swfupload/swfupload.js"></script>
+        <script type="text/javascript" src="<?php echo FLUTTER_URI?>js/groups.js"></script>
+        
 
 		
 		<script type="text/javascript">
@@ -263,32 +268,6 @@ class RCCWP_WritePostPage
 		</style>
 		<script language="JavaScript" type="text/javascript" src="<?php echo FLUTTER_URI; ?>js/prototype.js"></script>
 
-		<!--<script type="text/javascript">
-			
-			tinyMCE.init({
-			theme : "advanced",
-			theme_advanced_toolbar_location : "top",
-			theme_advanced_toolbar_align : "left",
-			theme_advanced_buttons1 : "bold, italic, |, underline, |, bullist, numlist, outdent, indent, |, justifyleft, justifycenter, justifyright, justifyfull, |, link, unlink, spellchecker",
-				theme_advanced_buttons2 : "",
-				theme_advanced_buttons3 : "",
-			mode : "textareas",
-			skin : "wp_theme",
-			tab_focus : "next",
-			spellchecker_languages : "english",
-			convert_urls : false,
-			gecko_spellcheck : true,
-			convert_newlines_to_brs : false,
-			force_br_newlines : true,
-			force_p_newlines : false,
-			//mode : "exact",
-			//elements : "editorContent",
-			editor_selector : "mceEditor",
-			width : "100%",
-			height : "200"
-			});
-			
-		</script>-->
 		
 		<script type="text/javascript">
             var wp_root         = "<?php echo get_bloginfo('wpurl');?>";
@@ -445,51 +424,6 @@ class RCCWP_WritePostPage
 				}
 			}
 			
-			// -------------
-			// Duplicates functions
-
-			function getDuplicate(fId,fcounter,div,gcounter)
-			{
-				$(div).setStyle({display: ""});
-				new Ajax.Request('<?php echo FLUTTER_URI; ?>RCCWP_GetDuplicate.php',
-				{
-					method:'post',
-					onSuccess: function(transport){
-						$(div).insert( {before: transport.responseText} );
-						$(div).setStyle({display: "none"});
-					},
-					parameters: "customFieldId="+fId+"&fieldCounter="+fcounter+"&groupCounter="+gcounter
-					});
-			}
-
-			function deleteDuplicate(fieldinputName)
-			{
-				var field = document.getElementById( fieldinputName ) ;
- 				field.parentNode.removeChild(field) ;
-			}
-			
-			function GetGroupDuplicate(div, customGroupID)
-			{
-				customGroupCounter = $F('g'+customGroupID+'counter');
-				customGroupCounter ++;
-				$('g'+customGroupID+'counter').value = customGroupCounter;
-				$(div).setStyle({display: ""});
-				new Ajax.Request('<?php echo FLUTTER_URI; ?>RCCWP_GetDuplicate.php',
-				{
-					method:'post',
-					onSuccess: function(transport){
-					$(div).insert( {before: transport.responseText} );
-					$(div).setStyle({display: "none"});
-					},
-					parameters: "flag=group&groupId="+customGroupID+"&groupCounter="+customGroupCounter
-				});
-			}
-						
-			function deleteGroupDuplicate(groupDiv)
-			{
-				var group = document.getElementById( groupDiv ) ;
-				group.parentNode.removeChild( group ) ;
-			}
 			function typeHandler(inputName,customFieldId,groupCounter)
 			{
 				oldval = $F("c"+inputName+"Counter");
@@ -542,17 +476,6 @@ class RCCWP_WritePostPage
 		</style>
 		
 		<?php
-		
-		/*<script type="text/javascript">
-			Event.observe(window, 'load', function() {
-				$$('h2').each(
-					function(element) {
-						if ($(element).innerHTML= "Advanced Options")
-							$(element).style.display="none";
-					});			
-			});
-		</script>*/
-		
 	}
 	
 	
@@ -560,224 +483,111 @@ class RCCWP_WritePostPage
 		RCCWP_WritePostPage::CustomFieldCollectionInterface(true);
 	}
 	
-	function CustomFieldCollectionInterface($rightOnly = false)
-	{
-		global $CUSTOM_WRITE_PANEL, $post;
-		global $flutter_domain;
-		
-		if (!isset($CUSTOM_WRITE_PANEL))
-			return;
-		
-		$customGroups = RCCWP_CustomWritePanel::GetCustomGroups($CUSTOM_WRITE_PANEL->id);
-		
-		foreach ($customGroups as $customGroup)
-		{
-			if (($rightOnly && !$customGroup->at_right) ||
-				(!$rightOnly && $customGroup->at_right))
-			{
-				continue;	
-			}
-			
-			// Render a block for each group in the module
-			?>
-			
-			<?php
-				$customFields = RCCWP_CustomGroup::GetCustomFields($customGroup->id);
-                if($post->post_type == "page"){
-                    $type = "page";
-                }else if($post->post_type == "post"){
-                    $type = "post";
-                }
 
-
-				if( isset( $_REQUEST['post'] ) && count($customFields) > 0)
-				{
-					$firstFieldName = $customFields[0]->name;
-					$gc = RCCWP_CustomField::GetFieldGroupDuplicates($_REQUEST['post'], $firstFieldName) ;
-					if ($gc < 1) $gc = 1;//for backward compatability
-					for($i=1;$i<=$gc;$i++)
-					{
-//						RCCWP_WritePostPage::GroupDuplicate2($customGroup,$i,false) ;
-/*
- * trying to create separate meta boxes  <============= 
- */
-						add_meta_box(
-                                        'Flutter',
-                                        'Flutter Custom Fields', 
-                                        array(
-                                                'RCCWP_WritePostPage', 
-                                                'CustomFieldCollectionInterface2'
-                                             ), 
-                                        $type,
-                                        'advanced'
-                                    );
-						
-					}
-				}
-				else
-				{
-		
-//					RCCWP_WritePostPage::GroupDuplicate($customGroup,1,false) ;
-/*
- * trying to create separate meta boxes  <============= 
- */
-					add_meta_box(
-                                    'Flutter', 
-                                    'Flutter Custom Fields', 
-                                    array(
-                                            'RCCWP_WritePostPage', 
-                                            'CustomFieldCollectionInterface2'
-                                         ), 
-                                    $type, 
-                                    'advanced'
-                                );
-					$gc = 1 ;
-				}
-			?>
-			 <div id="<?php echo $customGroup->id."Duplicate";?>" style="display:none">
-			 	<img class="duplicate_image"  src="<?php echo FLUTTER_URI; ?>images/spinner.gif" alt=""/> <?php _e('Loading', $flutter_domain); ?> ...					
-			 </div>
-			 <input type='hidden' name='g<?php echo $customGroup->id?>counter' id='g<?php echo $customGroup->id?>counter' value='<?php echo $gc?>' />
-		<?php	
-		}
-		?>
-			
-		<input type="hidden" name="rc-custom-write-panel-verify-key" id="rc-custom-write-panel-verify-key" value="<?php echo wp_create_nonce('rc-custom-write-panel')?>" />
-		<input type="hidden" name="rc-cwp-custom-write-panel-id" value="<?php echo $CUSTOM_WRITE_PANEL->id?>" />
-
-		<!-- rc_cwp_submit_buttons -->
-		<?php
-	}
-
-/*
- *  test to insert the custom fields in the div to make them draggable
- */	
-
-	function CustomFieldCollectionInterface2($rightOnly = false)
-	{
-		global $flutter_domain;
+	function CustomFieldCollectionInterface($rightOnly = false) {
+        global $flutter_domain;
 		global $CUSTOM_WRITE_PANEL;
-		
+
+        //if no exists the write panel return
 		if (!isset($CUSTOM_WRITE_PANEL))
 			return;
 		
 		$customGroups = RCCWP_CustomWritePanel::GetCustomGroups($CUSTOM_WRITE_PANEL->id);
-		
-		foreach ($customGroups as $customGroup)
-		{
-			if (($rightOnly && !$customGroup->at_right) ||
-				(!$rightOnly && $customGroup->at_right))
-			{
-			//	continue;	
-			}
-			
-			// Render a block for each group in the module
-			?>
-			
-			<?php
-				$customFields = RCCWP_CustomGroup::GetCustomFields($customGroup->id);
-				if( isset( $_REQUEST['post'] ) && count($customFields) > 0)
-				{
-					$firstFieldName = $customFields[0]->name;
-					$gc = RCCWP_CustomField::GetFieldGroupDuplicates($_REQUEST['post'], $firstFieldName) ;
-					if ($gc < 1) $gc = 1;//for backward compatability
-					for($i=1;$i<=$gc;$i++)
-					{
-						RCCWP_WritePostPage::GroupDuplicate2($customGroup,$i,false) ;
-					}
-				}
-				else
-				{
-					RCCWP_WritePostPage::GroupDuplicate2($customGroup,1,false) ;
-					$gc = 1 ;
-				}
-			?>
-			 <div id="<?php echo $customGroup->id."Duplicate";?>" style="display:none">
-			 	<img class="duplicate_image"  src="<?php echo FLUTTER_URI; ?>images/spinner.gif" alt=""/> <?php _e('Loading', $flutter_domain); ?> ...					
-			 </div>
-			 <input type='hidden' name='g<?php echo $customGroup->id?>counter' id='g<?php echo $customGroup->id?>counter' value='<?php echo $gc?>' />
-		<?php	
-		}
-		?>
-			
-		<input type="hidden" name="rc-custom-write-panel-verify-key" id="rc-custom-write-panel-verify-key" value="<?php echo wp_create_nonce('rc-custom-write-panel')?>" />
-		<input type="hidden" name="rc-cwp-custom-write-panel-id" value="<?php echo $CUSTOM_WRITE_PANEL->id?>" />
 
-		<!-- rc_cwp_submit_buttons -->
-		<?php
+		foreach ($customGroups as $customGroup) {
+
+            //render the elements
+    		$customFields = RCCWP_CustomGroup::GetCustomFields($customGroup->id);
+            
+            //when will be edit the  Post
+			if(isset( $_REQUEST['post'] ) && count($customFields) > 0){
+                $firstFieldName = $customFields[0]->name;
+				$duplicates  = RCCWP_CustomField::GetFieldGroupDuplicates($_REQUEST['post'], $firstFieldName) ;
+
+                if ($duplicates < 1) $duplicates = 1;//for backward compatability
+                
+                 
+                ?> 
+                <div id="write_panel_wrap_<?php echo $customGroup->id;?>"><?php
+                //build the group duplicates 
+				for($i= 1 ;$i<=$duplicates;$i++){
+                   ?><?php RCCWP_WritePostPage::GroupDuplicate2($customGroup,$i,false) ;?>
+                                                              <?php 
+				}
+                ?>
+                <input type='hidden' name='g<?php echo $customGroup->id?>counter' id='g<?php echo $customGroup->id?>counter' value='<?php echo $duplicates?>' />
+                <input type="hidden" name="rc-custom-write-panel-verify-key" id="rc-custom-write-panel-verify-key" value="<?php echo wp_create_nonce('rc-custom-write-panel')?>" />
+		        <input type="hidden" name="rc-cwp-custom-write-panel-id" value="<?php echo $CUSTOM_WRITE_PANEL->id?>" />
+                </div>
+            <?php
+			}else{
+            
+                ?>
+                <div id="write_panel_wrap_<?php echo $customGroup->id;?>">
+                <?php
+             		        RCCWP_WritePostPage::GroupDuplicate2($customGroup,1,false) ;
+                          $gc = 1;
+                ?>
+                <input type='hidden' name='g<?php echo $customGroup->id?>counter' id='g<?php echo $customGroup->id?>counter' value='<?php echo $gc?>' />
+           		<input type="hidden" name="rc-custom-write-panel-verify-key" id="rc-custom-write-panel-verify-key" value="<?php echo wp_create_nonce('rc-custom-write-panel')?>" />
+		        <input type="hidden" name="rc-cwp-custom-write-panel-id" value="<?php echo $CUSTOM_WRITE_PANEL->id?>" />
+                </div>
+            <?php 
+           }
+        }
 	}
-	
-	function GroupDuplicate2($customGroup, $groupCounter, $fromAjax=true)
-	{
+
+    /**
+     * This method and   groupduplicated  will be merged in nexts commits
+     * 
+     * @param object $customGroup
+     * @param integer $groupCounter
+     * @param boolean $fromAjax
+     *
+     */ 
+	function GroupDuplicate2($customGroup, $groupCounter, $fromAjax=true){
 		global $flutter_domain;
+             
+
+        $counter = "";
+        if($groupCounter == 1){
+            $counter = "";
+        }else{
+            $tmp = $groupCounter ;
+            $counter = "(".$tmp.")";
+        }
+ 
+        //getting the custom fields
 		$customFields = RCCWP_CustomGroup::GetCustomFields($customGroup->id);
-		if (count($customFields) == 0) return;
-		if( $customGroup->duplicate == 0 & $groupCounter != 1 ) return ;
+       
+        //if don't have fields then finish
+	    if (count($customFields) == 0) return;
+
+        //¿?
+		if( $customGroup->duplicate == 0 && $groupCounter != 1 ) return ;
 		require_once("RC_Format.php");
 
-		if ( $customGroup->name == "__default"){	
-// 			$customGroup->name = "Module general fields";
-			$customGroup->name = "" ;
-		}
 		?>
-		
-		<?php if ($groupCounter==1){ ?>
-<!-- 		<div id="freshpostdiv_group_<?php echo $customGroup->id.'_'.$groupCounter;?>" class="<?= ($customGroup->name != "")? "postbox ".postbox_classes('freshpostdiv_group_'.$customGroup->id, 'post'): "postbox" ?>">  -->	
-			
-<!-- 			<?php if ($customGroup->name != ""){ ?>
-					<h3> 
-						<?php echo  $customGroup->name ?>
-					</h3>
-				<?php } else { ?>
-					<h3> 
-						<?php echo  "Flutter custom field"; ?>
-					</h3>
-				<?php } ?>  -->	
-		<?php } else { ?>
- 			<div id="freshpostdiv_group_<?php echo $customGroup->id.'_'.$groupCounter;?>" class="postbox1"> <!--
-				<?php if ($fromAjax){ ?>
-				<h3 onclick="jQuery(jQuery(this).parent().get(0)).toggleClass('closed');"> <a class="togbox">+</a>
-				<?php }else{ ?>
-				<h3>
-				<?php } ?>
-				<?php echo  $customGroup->name." ($groupCounter)" ?> 
-				</h3> -->
-		<?php }?>
-<!--		<div class="inside">  -->	
+		<div id="freshpostdiv_group_<?php echo $customGroup->id.'_'.$groupCounter;?>" class="postbox1">	
+            <div class="postbox">
+                <h3 class="hndle">
+                    <span><?php echo $customGroup->name;?> <?php echo $counter;?></span>
+                </h3>
+            <div class="inside">
 			<table class="form-table" style="width: 100%;" cellspacing="2" cellpadding="5">
-			<?php	
-			foreach ($customFields as $field)
-			{
-			// Render a row for each field in the group
-				$customField = RCCWP_CustomField::Get($field->id);
-				$customFieldName = RC_Format::GetInputName(attribute_escape($field->name));
-				$customFieldTitle = attribute_escape($customField->description);
-				$inputName = $field->id."_".$groupCounter."_1_".$customFieldName	
+			    <?php	
+	        		foreach ($customFields as $field) {
+			            // Render a row for each field in the group
+            			$customField = RCCWP_CustomField::Get($field->id);
+		        		$customFieldName = RC_Format::GetInputName(attribute_escape($field->name));
+        				$customFieldTitle = attribute_escape($customField->description);
+		        		$inputName = $field->id."_".$groupCounter."_1_".$customFieldName;
 
-			?>
-			
-				<?php
-					if( isset( $_REQUEST['post'] ) )
-					{
-						$fc = RCCWP_CustomField::GetFieldDuplicates($_REQUEST['post'],$field->name,$groupCounter) ;
-						if ($fc < 1) $fc = 1;//for backward compatability
-						for($i=1;$i<=$fc;$i++)
-						{
-							//if ($i>1) echo "<div id='field".$field->id."_$i"."_$groupCounter'>" ;
-							RCCWP_WritePostPage::CustomFieldInterface($field->id,$groupCounter,$i) ;
-							//if ($i>1) echo "</div>" ;
-						}
-					}
-					else
-					{
-						RCCWP_WritePostPage::CustomFieldInterface($field->id,$groupCounter,1);
-						$fc = 1 ;
-					}
-					
-					
-				?>
-				
-				<tr style="display:none" id="<?php echo "c".$inputName."Duplicate"?>">
+                        RCCWP_WritePostPage::CustomFieldInterface($field->id,$groupCounter,1);
+
+                    }
+                ?>
+               <tr style="display:none" id="<?php echo "c".$inputName."Duplicate"?>">
 					<th valign="top" scope="row">
 					</th>
 					<td>
@@ -785,153 +595,85 @@ class RCCWP_WritePostPage
 						<input type="hidden" name="c<?php echo $inputName ?>Counter" id="c<?php echo $inputName ?>Counter" value='<?php echo $fc ?>' /> 
 					</td>
 				</tr>
-					
-				
-			<?php }
-			?>
-				
-		</table>
-<!-- 		</div> -->
-		<br />
-		<?php
-		if( $customGroup->duplicate != 0 ){
-			if( $groupCounter == 1 ){
-			?>
-				<a class ="duplicate_button" href="javascript:GetGroupDuplicate('<?php echo $customGroup->id."Duplicate";?>', <?php echo $customGroup->id ?>)"> 
-					<img class="duplicate_image" src="<?php echo FLUTTER_URI; ?>images/duplicate.png" alt="<?php _e('Add group duplicate', $flutter_domain); ?>"/> <?php _e('Duplicate Group', $flutter_domain); ?>
-				</a>
-				<br style="height:2px"/>
+		    </table>
+    		<br />
+	    	<?php
+		        if( $customGroup->duplicate != 0 ){
+                    if($groupCounter != 1):?>
+                        <a class ="delete_duplicate_button" href="javascript:void(0);" id="delete_duplicate-freshpostdiv_group_<?php echo $customGroup->id.'_'.$groupCounter; ?>"> 
+            		        <img class="duplicate_image"  src="<?php echo FLUTTER_URI; ?>images/delete.png" alt="<?php _e('Remove field duplicate', $flutter_domain); ?>"/><?php _e('Remove Group', $flutter_domain); ?>
+                	    </a>
+                    <?php else:?> 
+                        <a class="duplicate_button" id="add_duplicate_<?php echo $customGroup->id."Duplicate"."_".$customGroup->id;?>" href="javascript:void(0);"> 
+            		    	<img class="duplicate_image" src="<?php echo FLUTTER_URI; ?>images/duplicate.png" alt="<?php _e('Add group duplicate', $flutter_domain); ?>"/> <?php _e('Duplicate Group', $flutter_domain); ?>
+	                	</a>
+                   <?php endif;?> 
+			<br style="height:2px"/>
 			<?php
-			}
-			else {
-			?>
-				<a class ="duplicate_button" href="javascript:deleteGroupDuplicate('freshpostdiv_group_<?php echo $customGroup->id.'_'.$groupCounter ?>')" > 
-					<img class="duplicate_image"  src="<?php echo FLUTTER_URI; ?>images/delete.png" alt="<?php _e('Remove field duplicate', $flutter_domain); ?>"/><?php _e('Remove Group', $flutter_domain); ?>
-				</a>
-				<br style="height:2px"/></div>
-			<?php }
-		}
-		?>
-<!-- 		</div> -->
-		
+                }
+		    ?>
+                </div>
+            </div> 
+        </div>
 		<?php
 	}
-	
-	
-/*
- * end test functions
- */
 
-	function GroupDuplicate($customGroup, $groupCounter, $fromAjax=true)
-	{
+    /**
+     * This function is for duplicate  a group  (When is clicked the button "Duplicate Group"
+     * @param object   $customGroup 
+     * @param integer  $groupCounter
+     * @param boolean  $fromAjax
+     *
+     */
+	function GroupDuplicate($customGroup, $groupCounter, $fromAjax=true) {
 		global $flutter_domain;
-		$customFields = RCCWP_CustomGroup::GetCustomFields($customGroup->id);
-		if (count($customFields) == 0) return;
-		if( $customGroup->duplicate == 0 & $groupCounter != 1 ) return ;
-		require_once("RC_Format.php");
-		
-		if ( $customGroup->name == "__default"){	
-// 			$customGroup->name = "Module general fields";
-			$customGroup->name = "" ;
-		}
-		?>
-		
-		<?php if ($groupCounter==1){ ?>
-			<div id="freshpostdiv_group_<?php echo $customGroup->id.'_'.$groupCounter;?>" class="<?= ($customGroup->name != "")? "postbox ".postbox_classes('freshpostdiv_group_'.$customGroup->id, 'post'): "postbox" ?>">
-			
-				<?php if ($customGroup->name != ""){ ?>
-					<h3> 
-						<?php echo  $customGroup->name ?>
-					</h3>
-				<?php } else { ?>
-					<h3> 
-						<?php echo $customFields[0]->name; ?>
-					</h3>
-				<?php } ?>
-		<?php } else { ?>
-			<div id="freshpostdiv_group_<?php echo $customGroup->id.'_'.$groupCounter;?>" class="postbox">
-				<?php if ($fromAjax){ ?>
-				<h3 onclick="jQuery(jQuery(this).parent().get(0)).toggleClass('closed');"> <a class="togbox">+</a>
-				<?php }else{ ?>
-				<h3>
-				<?php } ?>
-				<?php echo  $customGroup->name." ($groupCounter)" ?> 
-				</h3>
-		<?php }?>
-		<div class="inside">
-			<table class="form-table" style="width: 100%;" cellspacing="2" cellpadding="5">
-			<?php	
-			foreach ($customFields as $field)
-			{
-			// Render a row for each field in the group
-				$customField = RCCWP_CustomField::Get($field->id);
-				$customFieldName = RC_Format::GetInputName(attribute_escape($field->name));
-				$customFieldTitle = attribute_escape($customField->description);
-				$inputName = $field->id."_".$groupCounter."_1_".$customFieldName	
 
-			?>
-			
-				<?php
-					if( isset( $_REQUEST['post'] ) )
-					{
-						$fc = RCCWP_CustomField::GetFieldDuplicates($_REQUEST['post'],$field->name,$groupCounter) ;
-						if ($fc < 1) $fc = 1;//for backward compatability
-						for($i=1;$i<=$fc;$i++)
-						{
-							//if ($i>1) echo "<div id='field".$field->id."_$i"."_$groupCounter'>" ;
-							RCCWP_WritePostPage::CustomFieldInterface($field->id,$groupCounter,$i) ;
-							//if ($i>1) echo "</div>" ;
-						}
-					}
-					else
-					{
-						RCCWP_WritePostPage::CustomFieldInterface($field->id,$groupCounter,1);
-						$fc = 1 ;
-					}
-					
-					
-				?>
-				
-				<tr style="display:none" id="<?php echo "c".$inputName."Duplicate"?>">
-					<th valign="top" scope="row">
-					</th>
-					<td>
-						<img class="duplicate_image"  src="<?php echo FLUTTER_URI; ?>images/spinner.gif" alt=""/> <?php _e('Loading', $flutter_domain); ?> ... 
-						<input type="hidden" name="c<?php echo $inputName ?>Counter" id="c<?php echo $inputName ?>Counter" value='<?php echo $fc ?>' /> 
-					</td>
-				</tr>
-					
-				
-			<?php }
-			?>
-				
-		</table>
-		</div>
-		<br />
-		<?php
-		if( $customGroup->duplicate != 0 ){
-			if( $groupCounter == 1 ){
-			?>
-				<a class ="duplicate_button" href="javascript:GetGroupDuplicate('<?php echo $customGroup->id."Duplicate";?>', <?php echo $customGroup->id ?>)"> 
-					<img class="duplicate_image" src="<?php echo FLUTTER_URI; ?>images/duplicate.png" alt="<?php _e('Add group duplicate', $flutter_domain); ?>"/> <?php _e('Duplicate Group', $flutter_domain); ?>
-				</a>
-				<br style="height:2px"/>
-			<?php
-			}
-			else {
-			?>
-				<a class ="duplicate_button" href="javascript:GetGroupDuplicate('<?php echo $customGroup->id."Duplicate";?>', <?php echo $customGroup->id ?>)"> 
-					<img class="duplicate_image" src="<?php echo FLUTTER_URI; ?>images/duplicate.png" alt="<?php _e('Add group duplicate', $flutter_domain); ?>"/> <?php _e('Duplicate Group', $flutter_domain); ?>
-				</a>
-				<a class ="duplicate_button" href="javascript:deleteGroupDuplicate('freshpostdiv_group_<?php echo $customGroup->id.'_'.$groupCounter ?>')" > 
-					<img class="duplicate_image"  src="<?php echo FLUTTER_URI; ?>images/delete.png" alt="<?php _e('Remove field duplicate', $flutter_domain); ?>"/><?php _e('Remove Group', $flutter_domain); ?>
-				</a>
-				<br style="height:2px"/>
-			<?php }
-		}
+        //getting the custom fields
+		$customFields = RCCWP_CustomGroup::GetCustomFields($customGroup->id);
+
+		//if don't have any   custom field then finish
+        if (count($customFields) == 0) return;
+
+        //if this  group can't be duplicated  and  the group conter is != to 1 then finish
+		if( $customGroup->duplicate == 0 && $groupCounter != 1 ) return ;
+
+        //formating
+		require_once("RC_Format.php");
 		?>
-		</div>
 		
+		<div id="freshpostdiv_group_<?php echo $customGroup->id.'_'.$groupCounter;?>" class="postbox">
+            <h3 onclick="jQuery(jQuery(this).parent().get(0)).toggleClass('closed');"> <a class="togbox">+</a>
+			    <?php echo  $customGroup->name." ($groupCounter)" ?> 
+		    </h3>
+		    <div class="inside">
+			    <table class="form-table" style="width: 100%;" cellspacing="2" cellpadding="5">
+    			    <?php	
+	    		        foreach ($customFields as $field){
+		    	            // Render a row for each field in the group
+        	    			$customField = RCCWP_CustomField::Get($field->id);
+		            		$customFieldName = RC_Format::GetInputName(attribute_escape($field->name));
+        			    	$customFieldTitle = attribute_escape($customField->description);
+		        		    $inputName = $field->id."_".$groupCounter."_1_".$customFieldName;
+    			    
+                            RCCWP_WritePostPage::CustomFieldInterface($field->id,$groupCounter,1);
+		    	        }
+			        ?>	
+			        <tr style="display:none" id="<?php echo "c".$inputName."Duplicate"?>">
+    			        <th valign="top" scope="row">
+        				</th>
+	        			<td>
+    		    		    <img class="duplicate_image"  src="<?php echo FLUTTER_URI; ?>images/spinner.gif" alt=""/> <?php _e('Loading', $flutter_domain); ?> ... 
+	    		    		<input type="hidden" name="c<?php echo $inputName ?>Counter" id="c<?php echo $inputName ?>Counter" value='<?php echo $fc ?>' /> 
+		    		    </td>
+    		    	</tr>		
+                </table>
+	    	</div>
+    		<br />
+	    	<a class ="delete_duplicate_button" href="javascript:void(0);" id="delete_duplicate-freshpostdiv_group_<?php echo $customGroup->id.'_'.$groupCounter ?>"> 
+		        <img class="duplicate_image"  src="<?php echo FLUTTER_URI; ?>images/delete.png" alt="<?php _e('Remove field duplicate', $flutter_domain); ?>"/><?php _e('Remove Group', $flutter_domain); ?>
+    	    </a>
+    		<br style="height:2px"/>
+        </div>
 		<?php
 	}
 

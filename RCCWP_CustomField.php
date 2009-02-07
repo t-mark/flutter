@@ -256,7 +256,6 @@ class RCCWP_CustomField
 		global $wpdb;
 		return $wpdb->get_var("SELECT count(DISTINCT group_count) FROM " . RC_CWP_TABLE_POST_META . 
 						" WHERE field_name = '$fieldName' AND post_id = $postId");
-		
 	}
 
 	/**
@@ -272,8 +271,8 @@ class RCCWP_CustomField
 		global $wpdb;
 		return $wpdb->get_var("SELECT count(DISTINCT field_count) FROM " . RC_CWP_TABLE_POST_META . 
 						" WHERE field_name = '$fieldName' AND post_id = $postId AND group_count = $groupIndex");
-		
-	}
+
+    }
 	
 	/**
 	 * Retrieves the id of a custom field given field name for the current post.
