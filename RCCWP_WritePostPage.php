@@ -2,7 +2,7 @@
 /**
  * This class content all  type of fields for the panels
  *
- *
+ * 
  *
  *
  */
@@ -89,7 +89,7 @@ class RCCWP_WritePostPage
 			}
 					
 		</style>
-
+        
         <!-- Live Query Jquery plugin -->
         <script  type="text/javascript" src="<?php echo FLUTTER_URI?>js/jquery.livequery.js"></script>
 
@@ -99,7 +99,6 @@ class RCCWP_WritePostPage
 
 		<script type="text/javascript" src="<?php echo FLUTTER_URI?>js/epoch_classes.js"></script> <!--Epoch's Code-->
 		<!-- Calendar Control -->
-		
 		
 		<script type="text/javascript">
 			var GB_ROOT_DIR = "<?php echo FLUTTER_URI?>js/greybox/";
@@ -155,6 +154,7 @@ class RCCWP_WritePostPage
 			}	
 			function exchangeValues(e, id)
 			{
+                //====  ¿? ====//
 				//document.getElementById(document.getElementById('parent_text_'+id.substring(10)).value).value = e;
 				//document.getElementById(document.getElementById('hidImgValue'+id.substring(10)).value).value = e;
 			}
@@ -487,8 +487,10 @@ class RCCWP_WritePostPage
 	function CustomFieldCollectionInterface($rightOnly = false) {
         global $flutter_domain;
 		global $CUSTOM_WRITE_PANEL;
+        global $wpdb;
+        global $post;
 
-        //if no exists the write panel return
+        //if no exists the write panel returni
 		if (!isset($CUSTOM_WRITE_PANEL))
 			return;
 		
@@ -505,14 +507,23 @@ class RCCWP_WritePostPage
 				$duplicates  = RCCWP_CustomField::GetFieldGroupDuplicates($_REQUEST['post'], $firstFieldName) ;
 
                 if ($duplicates < 1) $duplicates = 1;//for backward compatability
-                
                  
                 ?> 
-                <div id="write_panel_wrap_<?php echo $customGroup->id;?>"><?php
+                <div class="write_panel_wrapper"  id="write_panel_wrap_<?php echo $customGroup->id;?>"><?php
+                
                 //build the group duplicates 
 				for($i= 1 ;$i<=$duplicates;$i++){
-                   ?><?php RCCWP_WritePostPage::GroupDuplicate2($customGroup,$i,false) ;?>
-                                                              <?php 
+        
+                        if($customGroup->name != "__default"){
+                            //order the groups
+                            $order_id = $wpdb->get_var('select order_id from '.RC_CWP_TABLE_POST_META.' where post_id = '.$post->ID.' and group_count = '.$i.' and order_id != -1 limit 1');
+                        }else{
+                            $order_id = 1;
+                        }
+
+                   ?>
+                    <?php RCCWP_WritePostPage::GroupDuplicate2($customGroup,$order_id,$i,false) ;?>
+                   <?php 
 				}
                 ?>
                 <input type='hidden' name='g<?php echo $customGroup->id?>counter' id='g<?php echo $customGroup->id?>counter' value='<?php echo $duplicates?>' />
@@ -523,14 +534,14 @@ class RCCWP_WritePostPage
 			}else{
             
                 ?>
-                <div id="write_panel_wrap_<?php echo $customGroup->id;?>">
+                <div class="write_panel_wrapper" id="write_panel_wrap_<?php echo $customGroup->id;?>">
                 <?php
-             		        RCCWP_WritePostPage::GroupDuplicate2($customGroup,1,false) ;
+             		        RCCWP_WritePostPage::GroupDuplicate2($customGroup,1,1,false) ;
                           $gc = 1;
                 ?>
                 <input type='hidden' name='g<?php echo $customGroup->id?>counter' id='g<?php echo $customGroup->id?>counter' value='<?php echo $gc?>' />
-           		<input type="hidden" name="rc-custom-write-panel-verify-key" id="rc-custom-write-panel-verify-key" value="<?php echo wp_create_nonce('rc-custom-write-panel')?>" />
-		        <input type="hidden" name="rc-cwp-custom-write-panel-id" value="<?php echo $CUSTOM_WRITE_PANEL->id?>" />
+           		<input type='hidden' name="rc-custom-write-panel-verify-key" id="rc-custom-write-panel-verify-key" value="<?php echo wp_create_nonce('rc-custom-write-panel')?>" />
+		        <input type='hidden' name="rc-cwp-custom-write-panel-id" value="<?php echo $CUSTOM_WRITE_PANEL->id?>" />
                 </div>
             <?php 
            }
@@ -545,7 +556,7 @@ class RCCWP_WritePostPage
      * @param boolean $fromAjax
      *
      */ 
-	function GroupDuplicate2($customGroup, $groupCounter, $fromAjax=true){
+	function GroupDuplicate2($customGroup, $groupCounter,$orders = 0,$fromAjax=true){
 		global $flutter_domain;
              
 
@@ -559,6 +570,8 @@ class RCCWP_WritePostPage
  
         //getting the custom fields
 		$customFields = RCCWP_CustomGroup::GetCustomFields($customGroup->id);
+
+        Debug::log($customFields);
        
         //if don't have fields then finish
 	    if (count($customFields) == 0) return;
@@ -583,7 +596,7 @@ class RCCWP_WritePostPage
         				$customFieldTitle = attribute_escape($customField->description);
 		        		$inputName = $field->id."_".$groupCounter."_1_".$customFieldName;
 
-                        RCCWP_WritePostPage::CustomFieldInterface($field->id,$groupCounter,1);
+                        RCCWP_WritePostPage::CustomFieldInterface($field->id,$groupCounter,1,$customGroup->id);
 
                     }
                 ?>
@@ -614,6 +627,7 @@ class RCCWP_WritePostPage
 		    ?>
                 </div>
             </div> 
+            <input type="hidden" name="order_<?php echo $customGroup->id?>_<?php echo $groupCounter;?>" id="order_<?php echo $customGroup->id?>_<?php echo $groupCounter;?>" value="<?php echo $orders?>" />
         </div>
 		<?php
 	}
@@ -631,6 +645,7 @@ class RCCWP_WritePostPage
         //getting the custom fields
 		$customFields = RCCWP_CustomGroup::GetCustomFields($customGroup->id);
 
+
 		//if don't have any   custom field then finish
         if (count($customFields) == 0) return;
 
@@ -641,7 +656,8 @@ class RCCWP_WritePostPage
 		require_once("RC_Format.php");
 		?>
 		
-		<div id="freshpostdiv_group_<?php echo $customGroup->id.'_'.$groupCounter;?>" class="postbox">
+		<div id="freshpostdiv_group_<?php echo $customGroup->id.'_'.$groupCounter;?>" class="postbox1">
+        <div class="postbox">
             <h3 onclick="jQuery(jQuery(this).parent().get(0)).toggleClass('closed');"> <a class="togbox">+</a>
 			    <?php echo  $customGroup->name." ($groupCounter)" ?> 
 		    </h3>
@@ -655,7 +671,7 @@ class RCCWP_WritePostPage
         			    	$customFieldTitle = attribute_escape($customField->description);
 		        		    $inputName = $field->id."_".$groupCounter."_1_".$customFieldName;
     			    
-                            RCCWP_WritePostPage::CustomFieldInterface($field->id,$groupCounter,1);
+                            RCCWP_WritePostPage::CustomFieldInterface($field->id,$groupCounter,1,$customGroup->id);
 		    	        }
 			        ?>	
 			        <tr style="display:none" id="<?php echo "c".$inputName."Duplicate"?>">
@@ -673,18 +689,21 @@ class RCCWP_WritePostPage
 		        <img class="duplicate_image"  src="<?php echo FLUTTER_URI; ?>images/delete.png" alt="<?php _e('Remove field duplicate', $flutter_domain); ?>"/><?php _e('Remove Group', $flutter_domain); ?>
     	    </a>
     		<br style="height:2px"/>
+            </div>
+            <input type="hidden" name="order_<?php echo $customGroup->id?>_<?php echo $groupCounter;?>" id="order_<?php echo $customGroup->id?>_<?php echo $groupCounter;?>" value="0" />
         </div>
 		<?php
 	}
 
-	function CustomFieldInterface($customFieldId, $groupCounter=1, $fieldCounter=1)
+	function CustomFieldInterface($customFieldId, $groupCounter=1, $fieldCounter=1,$customGroup_id=0)
 	{
 		global $flutter_domain;
 		require_once("RC_Format.php");
 		$customField = RCCWP_CustomField::Get($customFieldId);
 		$customFieldName = RC_Format::GetInputName(attribute_escape($customField->name));
 		$customFieldTitle = attribute_escape($customField->description);
-		$inputName = $customFieldId."_".$groupCounter."_".$fieldCounter."_".$customFieldName; // Create input tag name
+        $groupId =  $customGroup_id;
+		$inputName = $customFieldId."_".$groupCounter."_".$fieldCounter."_".$groupId."_".$customFieldName; // Create input tag name
  		if( $fieldCounter > 1 && $customField->duplicate == 0 ) return ;
  		if( $fieldCounter > 1) $titleCounter = " ($fieldCounter)";
  		

@@ -99,7 +99,6 @@ function get ($fieldName, $groupIndex=1, $fieldIndex=1, $readyForEIP=true) {
         }
 
     }
-//print_r($results);
     return $results;
 
 }
@@ -305,7 +304,7 @@ function pt(){
 /**
  *  Return the value for the  layout option 
  *
- * @author David Valdez <david@freshout.us>
+ * 
  * @param string $option_name  
  *
  */
@@ -319,18 +318,21 @@ function option($variable_name){
   $value = $wpdb->get_var(  "SELECT value FROM ".FLUTTER_TABLE_LAYOUT_VARIABLES.
                             " WHERE  parent  = {$module_id} and  variable_name = '{$variable_name}'"
                          );
-
-
   return $value;
 }
 
-// Some filters you may wish to perform: (these are filters typically done to 'the_content' (post content))
-//add_filter('the_meta', 'convert_chars');
-//add_filter('the_meta', 'wptexturize');
+/**
+ * Return a array with the all values in one array 
+ *
+ * @param string $groupName 
+ */
+ function getGroupFields($groupName){
+     global $post,$wpdb;
+    
 
-// Other optional filters (you would need to obtain and activate these plugins before trying to use these)
-//add_filter('the_meta', 'c2c_hyperlink_urls', 9);
-//add_filter('the_meta', 'text_replace', 2);
-//add_filter('the_meta', 'textile', 6);
+     $write_panel = $wpdb->get_var("SELECT id FROM ".RC_CWP_TABLE_PANELS." WHERE name = '{$groupName}'");
+
+     return $write_panel;
+ }
 
 ?>

@@ -98,6 +98,7 @@ class RCCWP_CustomGroup
 			" JOIN " . RC_CWP_TABLE_CUSTOM_FIELD_TYPES . " tt ON cf.type = tt.id" . 
 			" WHERE group_id = " . $customGroupId .
 			" ORDER BY cf.display_order";
+
 		$results =$wpdb->get_results($sql);
 
 		if (!isset($results))

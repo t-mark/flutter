@@ -48,10 +48,9 @@ class RCCWP_Post
 	 * @param unknown_type $postId
 	 * @return unknown
 	 */
-	function SetMetaValues($postId)
-	{
+	function SetMetaValues($postId){
 		global $wpdb;
-			
+	
 		$customWritePanelId = $_POST['rc-cwp-custom-write-panel-id'];
 		$customFieldKeys = $_POST['rc_cwp_meta_keys'];
 		
@@ -77,10 +76,11 @@ class RCCWP_Post
 			$arr = ARRAY();
 			foreach($customFieldKeys as $key=>$value)
 			{
-				list($customFieldId, $groupCounter, $fieldCounter, $rawCustomFieldName) = split("_", $value, 4);
+				list($customFieldId, $groupCounter, $fieldCounter, $groupId,$rawCustomFieldName) = split("_", $value, 5);
 				$arr[$key]->id = $customFieldId ;
 				$arr[$key]->gc = $groupCounter ;
 				$arr[$key]->fc = $fieldCounter ;
+                $arr[$key]->gi = $groupId;
 				$arr[$key]->fn = $rawCustomFieldName ;
 				$arr[$key]->ov = $value ;
 			}
@@ -143,12 +143,25 @@ class RCCWP_Post
 				if (!empty($key))
 				{
 //					list($customFieldId, $groupCounter, $fieldCounter, $rawCustomFieldName) = split("_", $key, 4);
+                    //order
+                    $order = $_POST['order_'.$key->gi.'_'.$key->gc];
+
+                    /**
+                     * the id for the  __default group  is  ever "1"  and the default group NEVER can be duplicated
+                     * then if the $key->gi is 1  the order will be -1
+                     * 
+                     *
+                     */
+                    if($key->gi == 1){
+                        $order = -1;
+                    }
+
 					$customFieldValue = $_POST[$key->ov];
 				
 					$customFieldName = $wpdb->escape(stripslashes(trim(RC_Format::GetFieldName($key->fn))));
 					
 					// Prepare field value
-					if (is_array($customFieldValue))
+                        if (is_array($customFieldValue))
 					{
 						$finalValue = array();
 						foreach ($customFieldValue as $value)
@@ -166,21 +179,19 @@ class RCCWP_Post
 					}
             
                     //Multiline
-		    if (!is_array($finalValue))
-					{
+		            if (!is_array($finalValue)) {
 						$finalValue = nl2br($finalValue);
 					}
                     
-				// Add field value meta data
+    				// Add field value meta data
 					add_post_meta($postId, $customFieldName, $finalValue);
 					$fieldMetaID = $wpdb->insert_id;
 
-                   
 
 					// Add field extended properties
 					$wpdb->query("INSERT INTO ". RC_CWP_TABLE_POST_META .
-								" (id, field_name, group_count, field_count, post_id) ".
-								" VALUES ($fieldMetaID, '$customFieldName', ".$key->gc.", ".$key->fc.", $postId)");
+								" (id, field_name, group_count, field_count, post_id,order_id) ".
+								" VALUES ($fieldMetaID, '$customFieldName', ".$key->gc.", ".$key->fc.", $postId,$order)");
 				}
 			}
 	 	}	
