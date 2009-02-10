@@ -690,7 +690,7 @@ class RCCWP_WritePostPage
     	    </a>
     		<br style="height:2px"/>
             </div>
-            <input type="text" name="order_<?php echo $customGroup->id?>_<?php echo $groupCounter;?>" id="order_<?php echo $customGroup->id?>_<?php echo $groupCounter;?>" value="0" />
+            <input type="hidden" name="order_<?php echo $customGroup->id?>_<?php echo $groupCounter;?>" id="order_<?php echo $customGroup->id?>_<?php echo $groupCounter;?>" value="0" />
         </div>
 		<?php
 	}
