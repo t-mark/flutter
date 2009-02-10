@@ -326,13 +326,16 @@ function option($variable_name){
  *
  * @param string $groupName 
  */
- function getGroupFields($groupName){
-     global $post,$wpdb;
+function getGroupOrder(){
+    global $post,$wpdb;
     
-
-     $write_panel = $wpdb->get_var("SELECT id FROM ".RC_CWP_TABLE_PANELS." WHERE name = '{$groupName}'");
-
-     return $write_panel;
- }
+    $elements  = $wpdb->get_results("SELECT group_count FROM ".RC_CWP_TABLE_POST_META." WHERE post_id = ".$post->ID." ORDER BY order_id ASC");
+   
+    foreach($elements as $element){
+       $order[] =  $element->group_count;
+    }
+     
+    return $order;
+}
 
 ?>

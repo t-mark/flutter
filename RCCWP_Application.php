@@ -161,6 +161,7 @@ class RCCWP_Application
 				field_count integer NOT NULL,
 				post_id integer NOT NULL,
 				field_name text NOT NULL,
+                order_id integer NOT NULL DEFAULT -1
 				PRIMARY KEY (id) )" ;
 
             $blog_tables[] = "CREATE TABLE ". FLUTTER_TABLE_LAYOUT_MODULES ." (
@@ -438,6 +439,11 @@ class RCCWP_Application
 			$wpdb->query("INSERT IGNORE INTO " . RC_CWP_TABLE_CUSTOM_FIELD_TYPES . " VALUES (12, 'Color Picker', NULL, 'false', 'false', 'false')");
 			
 		}
+
+        if(RC_CWP_DB_VERSION >= 38){
+            $wpdb->query('ALTER TABLE '.RC_CWP_TABLE_POST_META.' add column order_id  integer default -1');
+
+        }
 		
 	}
 

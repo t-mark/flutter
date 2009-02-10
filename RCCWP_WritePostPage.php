@@ -532,6 +532,7 @@ class RCCWP_WritePostPage
                 </div>
             <?php
 			}else{
+                if(count($customFields) > 0){
             
                 ?>
                 <div class="write_panel_wrapper" id="write_panel_wrap_<?php echo $customGroup->id;?>">
@@ -544,6 +545,7 @@ class RCCWP_WritePostPage
 		        <input type='hidden' name="rc-cwp-custom-write-panel-id" value="<?php echo $CUSTOM_WRITE_PANEL->id?>" />
                 </div>
             <?php 
+                }
            }
         }
 	}
@@ -570,9 +572,7 @@ class RCCWP_WritePostPage
  
         //getting the custom fields
 		$customFields = RCCWP_CustomGroup::GetCustomFields($customGroup->id);
-
-        Debug::log($customFields);
-       
+        
         //if don't have fields then finish
 	    if (count($customFields) == 0) return;
 
@@ -690,7 +690,7 @@ class RCCWP_WritePostPage
     	    </a>
     		<br style="height:2px"/>
             </div>
-            <input type="hidden" name="order_<?php echo $customGroup->id?>_<?php echo $groupCounter;?>" id="order_<?php echo $customGroup->id?>_<?php echo $groupCounter;?>" value="0" />
+            <input type="text" name="order_<?php echo $customGroup->id?>_<?php echo $groupCounter;?>" id="order_<?php echo $customGroup->id?>_<?php echo $groupCounter;?>" value="0" />
         </div>
 		<?php
 	}
