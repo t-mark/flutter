@@ -12,7 +12,6 @@ class RCCWP_Post
 		RCCWP_Post::PrepareFieldsValues($postId);
 		RCCWP_Post::SetMetaValues($postId);
 		
-        Debug::log($_POST);
 
 		return $postId;
 	}
@@ -148,7 +147,6 @@ class RCCWP_Post
 //					list($customFieldId, $groupCounter, $fieldCounter, $rawCustomFieldName) = split("_", $key, 4);
                     //order
                     $order = $_POST['order_'.$key->gi.'_'.$key->gc];
-                    Debug::log($order);
 
                     /**
                      * the id for the  __default group  is  ever "1"  and the default group NEVER can be duplicated
