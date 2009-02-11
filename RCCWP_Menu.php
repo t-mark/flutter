@@ -416,6 +416,7 @@ class RCCWP_Menu
 				}
 
 				$offset++;
+				//thanks a Ashish Puliyel <ashish@gonzobuzz.com> by observing the roles of users
 				if ($panel->type == "post"){
 					$type_write_panel="edit-posts";
 				}else{
