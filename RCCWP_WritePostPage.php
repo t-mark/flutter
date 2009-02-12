@@ -526,7 +526,7 @@ class RCCWP_WritePostPage {
                 ?>
                 <div class="write_panel_wrapper" id="write_panel_wrap_<?php echo $customGroup->id;?>">
                 <?php
-             		        RCCWP_WritePostPage::GroupDuplicate2($customGroup,1,1,false) ;
+             		      RCCWP_WritePostPage::GroupDuplicate2($customGroup,1,1,false) ;
                           $gc = 1;
                 ?>
                 <input type='hidden' name='g<?php echo $customGroup->id?>counter' id='g<?php echo $customGroup->id?>counter' value='<?php echo $gc?>' />
@@ -568,11 +568,17 @@ class RCCWP_WritePostPage {
 		if( $customGroup->duplicate == 0 && $groupCounter != 1 ) return ;
 		require_once("RC_Format.php");
 
+        if(empty($customGroup->name) || $customGroup->name == "__default"){
+            $title = "Flutter custom fields";
+        }else{
+            $title = $customGroup->name;
+        }
+            
 		?>
 		<div id="freshpostdiv_group_<?php echo $customGroup->id.'_'.$groupCounter;?>" class="postbox1">	
             <div class="postbox">
                 <h3 class="hndle">
-                    <span><?php echo $customGroup->name;?> <?php echo $counter;?></span>
+                    <span><?php echo $title;?> <?php echo $counter;?></span>
                 </h3>
             <div class="inside">
 			<table class="form-table" style="width: 100%;" cellspacing="2" cellpadding="5">
@@ -596,7 +602,7 @@ class RCCWP_WritePostPage {
                             $fc = 1;
                         }
 
-                    }
+                    
                 ?>
                <tr style="display:none" id="<?php echo "c".$inputName."Duplicate"?>">
 					<th valign="top" scope="row">
@@ -605,7 +611,8 @@ class RCCWP_WritePostPage {
 						<img class="duplicate_image"  src="<?php echo FLUTTER_URI; ?>images/spinner.gif" alt=""/> <?php _e('Loading', $flutter_domain); ?> ... 
 						<input type="hidden" name="c<?php echo $inputName ?>Counter" id="c<?php echo $inputName ?>Counter" value='<?php echo $fc ?>' /> 
 					</td>
-				</tr>
+			    </tr>
+                <?php } ?>
 		    </table>
     		<br />
 	    	<?php
@@ -679,7 +686,7 @@ class RCCWP_WritePostPage {
     		    		    <img class="duplicate_image"  src="<?php echo FLUTTER_URI; ?>images/spinner.gif" alt=""/> <?php _e('Loading', $flutter_domain); ?> ... 
 	    		    		<input type="hidden" name="c<?php echo $inputName ?>Counter" id="c<?php echo $inputName ?>Counter" value='<?php echo $fc ?>' /> 
 		    		    </td>
-    		    	</tr>		
+    		    	</tr>
                 </table>
 	    	</div>
     		<br />

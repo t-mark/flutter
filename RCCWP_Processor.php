@@ -350,7 +350,7 @@ class RCCWP_Processor
 						
 						// Allows fields to be added to right
 //	commented to test		add_action('submitpost_box', array('RCCWP_WritePostPage', 'CustomFieldCollectionInterfaceRight'), 5); 
-						add_action('submitpage_box', array('RCCWP_WritePostPage', 'CustomFieldCollectionInterfaceRight'), 5);
+//						add_action('submitpage_box', array('RCCWP_WritePostPage', 'CustomFieldCollectionInterfaceRight'), 5);
 // commented to test
 						add_action('add_meta_box', 'post', 'side', array('RCCWP_WritePostPage', 'CustomFieldCollectionInterfaceRight'));
 						

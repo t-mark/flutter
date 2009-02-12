@@ -64,7 +64,6 @@ jQuery(document).ready(function(){
  * field duplicate 
  */
 getDuplicate = function(fId,fcounter,div,gcounter){
-    alert(div);
     jQuery.ajax({
         type : "POST",
         url  : flutter_path+'RCCWP_GetDuplicate.php',
