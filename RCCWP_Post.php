@@ -75,19 +75,21 @@ class RCCWP_Post
 			//		i.e. there is no gap due to removing items
 			
 			$arr = ARRAY();
+            $index = 1;
 			foreach($customFieldKeys as $key=>$value)
 			{
+                Debug::log($fieldCounter);
 				list($customFieldId, $groupCounter, $fieldCounter, $groupId,$rawCustomFieldName) = split("_", $value, 5);
 				$arr[$key]->id = $customFieldId ;
 				$arr[$key]->gc = $groupCounter ;
-				$arr[$key]->fc = $fieldCounter ;
+				//$arr[$key]->fc = $fieldCounter ;
+                $arr[$key]->fc = $index;
                 $arr[$key]->gi = $groupId;
 				$arr[$key]->fn = $rawCustomFieldName ;
 				$arr[$key]->ov = $value ;
+                $index++;
 			}
 
-        
-            //Fow what a hell is this??????
             /**
 			for($i=0;$i<$key;$i++){
 				for($j=0;$j<$key;$j++){
@@ -136,9 +138,9 @@ class RCCWP_Post
 				else $FC ++ ;
 				$arr[$i]->fc = $FC ;
 				$arr[$i]->gc = $GC ;
-			}
+			}*/
 
-*/
+
 			// --- Add new meta data
 			foreach ($arr as $key)
 			{
