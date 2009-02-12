@@ -90,10 +90,12 @@ function get ($fieldName, $groupIndex=1, $fieldIndex=1, $readyForEIP=true) {
 	
         switch($fieldType){
             case $FIELD_TYPES["textbox"]:
+		if(!$results) $results="&nbsp";
                 $results = "<div class='".EIP_textbox($fieldMetaID)."' >".$results."</div>";
                 break;
 
             case $FIELD_TYPES["multiline_textbox"]:
+		if(!$results) $results="&nbsp";
                 $results = "<div class='".EIP_mulittextbox($fieldMetaID)."' >".$results."</div>";
                 break;
         }
