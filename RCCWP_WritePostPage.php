@@ -1,15 +1,11 @@
 <?php
 /**
  * This class content all  type of fields for the panels
- *
- * 
- *
- *
  */
-class RCCWP_WritePostPage
-{
-
-	function ApplyCustomWritePanelAssignedCategories($content){ 
+class RCCWP_WritePostPage {
+    
+    
+    function ApplyCustomWritePanelAssignedCategories($content){ 
 		global $CUSTOM_WRITE_PANEL;
 		global $post,$title;
 		
@@ -424,13 +420,6 @@ class RCCWP_WritePostPage
 				}
 			}
 			
-			function typeHandler(inputName,customFieldId,groupCounter)
-			{
-				oldval = $F("c"+inputName+"Counter");
-				newval = parseInt(oldval) + 1;
-				$("c"+inputName+"Counter").value = newval ;
-				getDuplicate(customFieldId, $F("c"+inputName+"Counter"), "c"+inputName+"Duplicate",$(groupCounter)) ;
-			}
 
 		</script>
 
@@ -561,7 +550,6 @@ class RCCWP_WritePostPage
 	function GroupDuplicate2($customGroup, $groupCounter,$orders = 0,$fromAjax=true){
 		global $flutter_domain;
              
-
         $counter = "";
         if($groupCounter == 1){
             $counter = "";
@@ -594,9 +582,19 @@ class RCCWP_WritePostPage
             			$customField = RCCWP_CustomField::Get($field->id);
 		        		$customFieldName = RC_Format::GetInputName(attribute_escape($field->name));
         				$customFieldTitle = attribute_escape($customField->description);
-		        		$inputName = $field->id."_".$groupCounter."_1_".$customFieldName;
+                        $groupId  = $customGroup->id;
+		        		$inputName = $field->id."_".$groupCounter."_1_".$groupId."_".$customFieldName;
 
-                        RCCWP_WritePostPage::CustomFieldInterface($field->id,$groupCounter,1,$customGroup->id);
+                        if(isset($_REQUEST['post'])){
+                            $fc = RCCWP_CustomField::GetFieldDuplicates($_REQUEST['post'],$field->name,$groupCounter);
+                            if($fc < 1) $fc = 1;
+                            for($i = 1;$i <= $fc;$i++){
+                                RCCWP_WritePostPage::CustomFieldInterface($field->id,$groupCounter,$i,$customGroup->id); 
+                            }   
+                        }else{
+                            RCCWP_WritePostPage::CustomFieldInterface($field->id,$groupCounter,1,$customGroup->id);
+                            $fc = 1;
+                        }
 
                     }
                 ?>
@@ -695,8 +693,7 @@ class RCCWP_WritePostPage
 		<?php
 	}
 
-	function CustomFieldInterface($customFieldId, $groupCounter=1, $fieldCounter=1,$customGroup_id=0)
-	{
+	function CustomFieldInterface($customFieldId, $groupCounter=1, $fieldCounter=1,$customGroup_id=0){
 		global $flutter_domain;
 		require_once("RC_Format.php");
 		$customField = RCCWP_CustomField::Get($customFieldId);
@@ -783,7 +780,7 @@ class RCCWP_WritePostPage
 					<?php if($customField->duplicate != 0 ){ ?>
 					<br />
 					
-					<a class ="duplicate_button" href="javascript:typeHandler('<?php echo $inputName ?>',<?php echo $customFieldId ?>,<?php echo $groupCounter ?>)" > 
+					 <a class ="typeHandler" href="javascript:void(0);" id="type_handler-<?php echo $inputName ?>" > 
 						<img class="duplicate_image"  src="<?php echo FLUTTER_URI; ?>images/duplicate.png" alt="<?php _e('Add field duplicate', $flutter_domain); ?>"/>  <?php _e('Duplicate', $flutter_domain); ?>
 					</a>
 					<?php } ?>
@@ -795,7 +792,7 @@ class RCCWP_WritePostPage
 				?>
 					<br />
 					
-					<a class ="duplicate_button" href="javascript:deleteDuplicate('row_<?php echo $inputName?>')" > 
+					<a class ="delete_duplicate_field" href="javascript:void(0)" id="delete_field_repeat-<?php echo $inputName?>"> 
 						<img class="duplicate_image"  src="<?php echo FLUTTER_URI; ?>images/delete.png" alt="<?php _e('Remove field duplicate', $flutter_domain); ?> "/> <?php _e('Remove', $flutter_domain); ?> 
 					</a>
 				<?php

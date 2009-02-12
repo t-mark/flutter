@@ -269,6 +269,7 @@ class RCCWP_CustomField
 	 */
 	function GetFieldDuplicates($postId, $fieldName, $groupIndex){
 		global $wpdb;
+
 		return $wpdb->get_var("SELECT count(DISTINCT field_count) FROM " . RC_CWP_TABLE_POST_META . 
 						" WHERE field_name = '$fieldName' AND post_id = $postId AND group_count = $groupIndex");
 

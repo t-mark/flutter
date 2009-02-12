@@ -21,7 +21,16 @@ jQuery(document).ready(function(){
         customGroupID =  id[3];
         GetGroupDuplicate(group,customGroupID);
 
-            });
+    });
+
+    //delete duplicate field
+    jQuery(".delete_duplicate_field").livequery("click",function(event){
+        id = jQuery(this).attr("id");
+        div = id.split("-")[1]; 
+        div = "row_"+div;
+        deleteGroupDuplicate(div);
+    });
+
 
     //delete some duplicate group
     jQuery(".delete_duplicate_button").livequery("click",function(event){
@@ -29,7 +38,42 @@ jQuery(document).ready(function(){
         div = id.split("-")[1];
         deleteGroupDuplicate(div);
     }); 
+
+    //duplicate field
+    jQuery(".typeHandler").click(function(){
+        inputName = jQuery(this).attr("id").split("-")[1];
+        customFieldId =  inputName.split("_")[0];
+        groupCounter = inputName.split("_")[1];
+
+        oldval = jQuery("#c"+inputName+"Counter").val();    
+        newval = parseInt(oldval) + 1; 
+        jQuery("#c"+inputName+"Counter").val(newval); 
+
+
+        counter = jQuery("#c"+inputName+"Counter").val();
+        div  = "c"+inputName+"Duplicate";
+
+        getDuplicate(customFieldId,counter,div,groupCounter);
+
+
+    });
 });
+
+
+/**
+ * field duplicate 
+ */
+getDuplicate = function(fId,fcounter,div,gcounter){
+    alert(div);
+    jQuery.ajax({
+        type : "POST",
+        url  : flutter_path+'RCCWP_GetDuplicate.php',
+        data : "customFieldId="+fId+"&fieldCounter="+fcounter+"&groupCounter="+gcounter,
+        success: function(msg){
+            jQuery("#"+div).after(msg);
+        }
+    });
+}
 
 /**
  * Add a new duplicate group
@@ -53,7 +97,6 @@ GetGroupDuplicate = function(div,customGroupID){
                     ids = kids[i].id.split("_")[3];
                     jQuery("#order_"+groupCounter+"_"+ids).val(i+1);
                 }
-
         }
     });
 }

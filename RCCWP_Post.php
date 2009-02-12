@@ -146,7 +146,13 @@ class RCCWP_Post
 				{
 //					list($customFieldId, $groupCounter, $fieldCounter, $rawCustomFieldName) = split("_", $key, 4);
                     //order
-                    $order = $_POST['order_'.$key->gi.'_'.$key->gc];
+                    if($key->gi == 1){
+                        $order = -1;
+                    }else if (!empty($_POST['order_'.$key->gi.'_'.$key->gc])){
+                        $order = $_POST['order_'.$key->gi.'_'.$key->gc];
+                    }else{
+                        $order = -1;
+                    }
 
                     /**
                      * the id for the  __default group  is  ever "1"  and the default group NEVER can be duplicated
@@ -159,7 +165,7 @@ class RCCWP_Post
                     }
 
 					$customFieldValue = $_POST[$key->ov];
-				
+
 					$customFieldName = $wpdb->escape(stripslashes(trim(RC_Format::GetFieldName($key->fn))));
 					
 					// Prepare field value
