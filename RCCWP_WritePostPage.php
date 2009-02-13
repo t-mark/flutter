@@ -504,7 +504,7 @@ class RCCWP_WritePostPage {
         
                         if($customGroup->name != "__default"){
                             //order the groups
-                            $order_id = $wpdb->get_var('select order_id from '.RC_CWP_TABLE_POST_META.' where post_id = '.$post->ID.' and group_count = '.$i.' and order_id != -1 limit 1');
+                            $order_id = $wpdb->get_var('select order_id from '.RC_CWP_TABLE_POST_META.' where post_id = '.$post->ID.' and group_count = '.$i.' limit 1');
                         }else{
                             $order_id = 1;
                         }
