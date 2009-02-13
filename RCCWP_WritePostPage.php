@@ -1150,12 +1150,13 @@ class RCCWP_WritePostPage {
                         //id = ide.split("-")[1];
                         id = ide;
                         image = jQuery('#'+id).val();
-                        jQuery.get('<?php echo FLUTTER_URI;?>RCCWP_removeFiles.php',{'action':'delete','image':image},
+                        jQuery.get('<?php echo FLUTTER_URI;?>RCCWP_removeFiles.php',{'action':'delete','file':image},
                                     function(message){
                                         if(message == "true"){
                                             photo = "img_thumb_" + id;
                                             jQuery("#"+photo).attr("src","<?php echo  FLUTTER_URI."images/noimage.jpg"?>");
                                             jQuery("#photo_edit_link_"+id).empty();
+                                            jQuery("#"+id).val("");
 
                                         }
                                     });
@@ -1173,6 +1174,7 @@ class RCCWP_WritePostPage {
                                             photo = "img_thumb_" + id;
                                             jQuery("#"+photo).attr("src","<?php echo FLUTTER_URI."images/noimage.jpg"?>");
                                             jQuery("#photo_edit_link_"+id).empty();
+                                            jQuery("#"+id).val("");
 
                                         }
                                     });
