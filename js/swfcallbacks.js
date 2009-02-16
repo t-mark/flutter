@@ -2,7 +2,7 @@ var swfu = new Array();
 
 jQuery(document).ready(function(){
 
-    jQuery(".upload_file").each(function(i){
+/**    jQuery(".upload_file").each(function(i){
         file =  this.id.split("-")[1];
           
 	    swfu[i]  = new SWFUpload({
@@ -36,8 +36,8 @@ jQuery(document).ready(function(){
 		                                auth_cookie : swf_authentication,
                                     	_wpnonce : swf_nonce
         		                	}
-                        		} );
-    });
+                        		});
+    });*/
 });
 
 function adjust(file)

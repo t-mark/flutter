@@ -39,7 +39,9 @@ class RCCWP_SWFUpload
 				{
 				?>
 					<tr  style="background:transparent" id="swfuploadRow_<?php echo $inputName ?>">
-						<td style="border-bottom-width: 0px;padding: 0px"><label for="swfupload" ><?php _e('Upload', $flutter_domain); ?>:</label></td>
+						<td style="border-bottom-width: 0px;padding: 0px">
+                           <label for="swfupload" ><?php _e('Upload', $flutter_domain); ?>:</label>
+                        </td>
 						<td style="border-bottom-width: 0px">
                             <span id="upload-<?php echo $inputName?>" class="upload_file" ></span>
                         </td>
@@ -61,7 +63,40 @@ class RCCWP_SWFUpload
 				</tr>
 
 			</table>
-		
+		                            <script type="text/javascript">
+                                
+                                element =  new SWFUpload({
+                                        //button settings
+	    		                        button_text: '<span class="button">Browse</span>',
+                                        button_text_style: '.button { text-align: center; font-weight: bold; font-family:"Lucida Grande","Lucida Sans Unicode",Tahoma,Verdana,sans-serif; }',
+			                            button_height: "24",
+                            			button_width: "132",
+                	    	        	button_image_url: wp_root+'/wp-includes/images/upload.png',
+                		            	file_post_name: "async-upload",
+                                        
+                                        //requeriments settings
+                                        upload_url  : flutter_path + "/RCCWP_GetFile.php",
+           		                	    flash_url :  wp_root+"/wp-includes/js/swfupload/swfupload.swf",
+                                        file_size_limit : "20 MB",
+                                        button_placeholder_id : "upload-"+ "<?php echo $inputName;?>",
+                                        debug: false,
+    
+                                        //custom settings
+                                        custom_settings :{
+                                            'file_id' : "<?php echo $inputName;?>",
+                                        },
+                                            
+                                        //handlers
+                                        file_queued_handler : adjust,
+                                        upload_success_handler :  completed,
+            
+                                        post_params : {
+		                                    auth_cookie : swf_authentication,
+                                        	_wpnonce : swf_nonce
+        		                    	}
+                        	    	});
+                            </script>
+ 
 		<?php
 	}
 }

@@ -4,7 +4,6 @@
  */
 class RCCWP_WritePostPage {
     
-    
     function ApplyCustomWritePanelAssignedCategories($content){ 
 		global $CUSTOM_WRITE_PANEL;
 		global $post,$title;
@@ -505,7 +504,7 @@ class RCCWP_WritePostPage {
         
                         if($customGroup->name != "__default"){
                             //order the groups
-                            $order_id = $wpdb->get_var('select order_id from '.RC_CWP_TABLE_POST_META.' where post_id = '.$post->ID.' and group_count = '.$i.' and order_id != -1 limit 1');
+                            $order_id = $wpdb->get_var('select order_id from '.RC_CWP_TABLE_POST_META.' where post_id = '.$post->ID.' and group_count = '.$i.' limit 1');
                         }else{
                             $order_id = 1;
                         }
@@ -583,7 +582,10 @@ class RCCWP_WritePostPage {
             <div class="inside">
 			<table class="form-table" style="width: 100%;" cellspacing="2" cellpadding="5">
 			    <?php	
+                    $index = 0;
 	        		foreach ($customFields as $field) {
+                        $index++;
+
 			            // Render a row for each field in the group
             			$customField = RCCWP_CustomField::Get($field->id);
 		        		$customFieldName = RC_Format::GetInputName(attribute_escape($field->name));
@@ -609,7 +611,7 @@ class RCCWP_WritePostPage {
 					</th>
 					<td>
 						<img class="duplicate_image"  src="<?php echo FLUTTER_URI; ?>images/spinner.gif" alt=""/> <?php _e('Loading', $flutter_domain); ?> ... 
-						<input type="hidden" name="c<?php echo $inputName ?>Counter" id="c<?php echo $inputName ?>Counter" value='<?php echo $fc ?>' /> 
+						<input type="text" name="c<?php echo $inputName ?>Counter" id="c<?php echo $inputName ?>Counter" value='<?php echo $fc ?>' /> 
 					</td>
 			    </tr>
                 <?php } ?>
@@ -1148,12 +1150,13 @@ class RCCWP_WritePostPage {
                         //id = ide.split("-")[1];
                         id = ide;
                         image = jQuery('#'+id).val();
-                        jQuery.get('<?php echo FLUTTER_URI;?>RCCWP_removeFiles.php',{'action':'delete','image':image},
+                        jQuery.get('<?php echo FLUTTER_URI;?>RCCWP_removeFiles.php',{'action':'delete','file':image},
                                     function(message){
                                         if(message == "true"){
                                             photo = "img_thumb_" + id;
                                             jQuery("#"+photo).attr("src","<?php echo  FLUTTER_URI."images/noimage.jpg"?>");
                                             jQuery("#photo_edit_link_"+id).empty();
+                                            jQuery("#"+id).val("");
 
                                         }
                                     });
@@ -1171,6 +1174,7 @@ class RCCWP_WritePostPage {
                                             photo = "img_thumb_" + id;
                                             jQuery("#"+photo).attr("src","<?php echo FLUTTER_URI."images/noimage.jpg"?>");
                                             jQuery("#photo_edit_link_"+id).empty();
+                                            jQuery("#"+id).val("");
 
                                         }
                                     });

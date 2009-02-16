@@ -445,7 +445,7 @@ class RCCWP_Application
         }
         if(RC_CWP_DB_VERSION >= 39){
             $wpdb->query("update ".RC_CWP_TABLE_POST_META." ps, ".RC_CWP_TABLE_GROUP_FIELDS." cf, ".RC_CWP_TABLE_PANEL_GROUPS." mg set ps.order_id=ps.group_count");
-            $wpdb->query('update '.RC_CWP_TABLE_POST_META.' ps, '.RC_CWP_TABLE_GROUP_FIELDS.' cf, '.RC_CWP_TABLE_PANEL_GROUPS.' mg set ps.order_id=-1 where mg.name="__default" and mg.id=cf.group_id AND cf.name=ps.field_name');
+            //$wpdb->query('update '.RC_CWP_TABLE_POST_META.' ps, '.RC_CWP_TABLE_GROUP_FIELDS.' cf, '.RC_CWP_TABLE_PANEL_GROUPS.' mg set ps.order_id=-1 where mg.name="__default" and mg.id=cf.group_id AND cf.name=ps.field_name');
         }
 		
 	}
