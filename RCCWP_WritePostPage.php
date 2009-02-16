@@ -108,8 +108,6 @@ class RCCWP_WritePostPage {
 		<script type="text/javascript" src="<?php echo get_bloginfo('wpurl');?>/wp-includes/js/swfupload/swfupload.js"></script>
         <script type="text/javascript" src="<?php echo FLUTTER_URI?>js/groups.js"></script>
         
-
-		
 		<script type="text/javascript">
 				function isset(  ) {
 					// http://kevin.vanzonneveld.net
@@ -838,9 +836,7 @@ class RCCWP_WritePostPage {
 		{
 			$customFieldId = $customField->id;
 			$values = (array) RCCWP_CustomField::GetCustomFieldValues(false, $_REQUEST['post'], $customField->name, $groupCounter, $fieldCounter);
-		}
-		else
-		{
+		}else{
 			$values = $customField->default_value;
 		}
 		?>
@@ -852,8 +848,8 @@ class RCCWP_WritePostPage {
 			$option = attribute_escape(trim($option));
 		?>
 		
+		    <input tabindex="3" id="<?php echo $option?>" name="<?php echo $inputName?>[]" value="<?php echo $option?>" type="checkbox" <?php echo $checked?> style="width:40px;"/>
 			<label for="" class="selectit">
-				<input tabindex="3" id="<?php echo $option?>" name="<?php echo $inputName?>[]" value="<?php echo $option?>" type="checkbox" <?php echo $checked?>/>
 				<?php echo attribute_escape($option)?>
 			</label><br />
 		
