@@ -28,8 +28,8 @@ class FlutterLayout{
 		
 		//TODO Call GenerateCSSSettings() to generate CSS code.
 		$layoutHeaderCode .= FlutterLayout::GenerateCSSSettings($settings);
-		
-		echo $layoutHeaderCode;
+        
+		//echo $layoutHeaderCode;
 		
 		//TODO If the user has enough privileges, add CSS/Javascript file links for editing the Layout
 		if (current_user_can(FLUTTER_CAPABILITY_LAYOUT)){
@@ -125,7 +125,6 @@ class FlutterLayout{
 			</script>
 			
 			<?php
-
 		}
 		
 		

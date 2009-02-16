@@ -903,24 +903,24 @@ class RCCWP_WritePostPage {
 		<?php
 	}
 	
-	function ListboxInterface($customField, $inputName, $groupCounter, $fieldCounter)
-	{
+	function ListboxInterface($customField, $inputName, $groupCounter, $fieldCounter) {
+
 		$customFieldId = '';
-		if (isset($_REQUEST['post']))
-		{
+		if (isset($_REQUEST['post'])){
 			$customFieldId = $customField->id;
 			$values = (array) RCCWP_CustomField::GetCustomFieldValues(false, $_REQUEST['post'], $customField->name, $groupCounter, $fieldCounter);
-		}
-		else
-		{
+	
+
+        }else{
 			$values = $customField->default_value;
 		}
 		
 		$inputSize = (int)$customField->properties['size'];
-		if ($customField->required_field) $requiredClass = "field_required";
+        $requiredClass = "flutter_listbox";
+		if ($customField->required_field) $requiredClass = "flutter_listbox field_required";
 		?>
 		
-		<select  class="<?php echo $requiredClass;?>"  tabindex="3" id="<?php echo $inputName?>" name="<?php echo $inputName?>[]" multiple size="<?php echo $inputSize?>">
+		<select  class="<?php echo $requiredClass;?>"  tabindex="3" id="<?php echo $inputName?>" name="<?php echo $inputName?>[]" multiple size="<?php echo $inputSize?>" style="height: 6em;">
 		
 		<?php
 		foreach ($customField->options as $option) :
