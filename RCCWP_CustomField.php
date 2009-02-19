@@ -272,8 +272,50 @@ class RCCWP_CustomField
 
 		return $wpdb->get_var("SELECT count(DISTINCT field_count) FROM " . RC_CWP_TABLE_POST_META . 
 						" WHERE field_name = '$fieldName' AND post_id = $postId AND group_count = $groupIndex");
-
     }
+
+    /**
+     * Get field duplicates
+     *
+     *
+     */ 
+     function GetFieldsOrder($postId,$fieldName){
+         global $wpdb;
+
+         $tmp =  $wpdb->get_col(
+                                    "SELECT field_count FROM ".RC_CWP_TABLE_POST_META." WHERE field_name = '{$fieldName}' AND post_id = {$postId} GROUP BY field_count ORDER BY field_count ASC"
+                                );
+
+         return $tmp;
+     }
+
+    /**
+     * Get the order of group duplicates given the  field name. The function returns a
+     * array  with the orden  
+     *
+     * @param integer  $postId post id
+     * @param integer $fieldID  the name of any field in the group
+     * @return order of one group
+     */
+     function GetOrderDuplicates($postId,$fieldName){
+         global $wpdb;
+
+        
+         $tmp =  $wpdb->get_col(
+                                   "SELECT group_count  FROM ".RC_CWP_TABLE_POST_META." WHERE field_name = '{$fieldName}' AND   post_id = {$postId} GROUP BY group_count ORDER BY order_id asc"
+                                 );
+         
+         //the order start to 1  and the arrays start to 0
+         //then i just sum one element in each array key for 
+         //the  order and the array keys  be the same
+         $order  = array();
+         foreach($tmp as $key => $value){
+            $order[$key+1]  = $value;
+         } 
+         return $order;
+
+     }
+
 	
 	/**
 	 * Retrieves the id of a custom field given field name for the current post.

@@ -32,11 +32,21 @@ jQuery(document).ready(function(){
     });
 
 
-    //delete some duplicate group
+    //delete  duplicate group
     jQuery(".delete_duplicate_button").livequery("click",function(event){
         id = jQuery(this).attr("id");
         div = id.split("-")[1];
+
         deleteGroupDuplicate(div);
+
+        recount =  div.split("_")[2];
+        
+        kids =  jQuery("#write_panel_wrap_"+recount).children().filter(".postbox1");
+        for(i=0;i < kids.length; i++){
+            groupCounter =  kids[i].id.split("_")[2];
+            ids = kids[i].id.split("_")[3];
+            jQuery("#order_"+groupCounter+"_"+ids).val(i+1);
+        }
     }); 
 
     //duplicate field

@@ -1,6 +1,5 @@
 <?php
-class RCCWP_Post
-{	
+class RCCWP_Post {	
 	
 	function SaveCustomFields($postId){
 		if(!wp_verify_nonce($_REQUEST['rc-custom-write-panel-verify-key'], 'rc-custom-write-panel'))
@@ -63,7 +62,7 @@ class RCCWP_Post
 			{
 				if (!empty($key))
 				{
-					list($customFieldId, $groupCounter, $fieldCounter, $rawCustomFieldName) = split("_", $key, 4);
+					list($customFieldId, $groupCounter, $fieldCounter, $groupId, $rawCustomFieldName) = split("_", $key, 5);
 					$customFieldName = $wpdb->escape(stripslashes(trim(RC_Format::GetFieldName($rawCustomFieldName))));
 					delete_post_meta($postId, $customFieldName);	
 				}
@@ -75,18 +74,15 @@ class RCCWP_Post
 			//		i.e. there is no gap due to removing items
 			
 			$arr = ARRAY();
-            $index = 1;
 			foreach($customFieldKeys as $key=>$value)
 			{
 				list($customFieldId, $groupCounter, $fieldCounter, $groupId,$rawCustomFieldName) = split("_", $value, 5);
 				$arr[$key]->id = $customFieldId ;
 				$arr[$key]->gc = $groupCounter ;
-				//$arr[$key]->fc = $fieldCounter ;
-                $arr[$key]->fc = $index;
+				$arr[$key]->fc = $fieldCounter ;
                 $arr[$key]->gi = $groupId;
 				$arr[$key]->fn = $rawCustomFieldName ;
 				$arr[$key]->ov = $value ;
-                $index++;
 			}
 
             /**
@@ -145,26 +141,15 @@ class RCCWP_Post
 			{
 				if (!empty($key))
 				{
-//					list($customFieldId, $groupCounter, $fieldCounter, $rawCustomFieldName) = split("_", $key, 4);
                     //order
                     if($key->gi == 1){
-                        $order = -1;
+                        $order = 1;
                     }else if (!empty($_POST['order_'.$key->gi.'_'.$key->gc])){
                         $order = $_POST['order_'.$key->gi.'_'.$key->gc];
                     }else{
-                        $order = -1;
+                        $order = 1;
                     }
-
-                    /**
-                     * the id for the  __default group  is  ever "1"  and the default group NEVER can be duplicated
-                     * then if the $key->gi is 1  the order will be -1
-                     * 
-                     *
-                     */
-                    if($key->gi == 1){
-                        $order = -1;
-                    }
-
+                    
 					$customFieldValue = $_POST[$key->ov];
 
 					$customFieldName = $wpdb->escape(stripslashes(trim(RC_Format::GetFieldName($key->fn))));
@@ -204,6 +189,9 @@ class RCCWP_Post
 					$fieldMetaID = $wpdb->insert_id;
 
 					// Add field extended properties
+                    Debug::log("INSERT INTO ". RC_CWP_TABLE_POST_META .
+								" (id, field_name, group_count, field_count, post_id,order_id) ".
+								" VALUES ($fieldMetaID, '$customFieldName', ".$key->gc.", ".$key->fc.", $postId,$order)");
 					$wpdb->query("INSERT INTO ". RC_CWP_TABLE_POST_META .
 								" (id, field_name, group_count, field_count, post_id,order_id) ".
 								" VALUES ($fieldMetaID, '$customFieldName', ".$key->gc.", ".$key->fc.", $postId,$order)");

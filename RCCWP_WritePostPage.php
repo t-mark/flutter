@@ -479,40 +479,51 @@ class RCCWP_WritePostPage {
         //if no exists the write panel returni
 		if (!isset($CUSTOM_WRITE_PANEL))
 			return;
-		
+          
 		$customGroups = RCCWP_CustomWritePanel::GetCustomGroups($CUSTOM_WRITE_PANEL->id);
 
 		foreach ($customGroups as $customGroup) {
-
             //render the elements
     		$customFields = RCCWP_CustomGroup::GetCustomFields($customGroup->id);
             
             //when will be edit the  Post
 			if(isset( $_REQUEST['post'] ) && count($customFields) > 0){
+                //using the first field name we can know 
+                //the order  of the groups
                 $firstFieldName = $customFields[0]->name;
-				$duplicates  = RCCWP_CustomField::GetFieldGroupDuplicates($_REQUEST['post'], $firstFieldName) ;
 
-                if ($duplicates < 1) $duplicates = 1;//for backward compatability
-                 
+                //$duplicates  = RCCWP_CustomField::GetFieldGroupDuplicates($_REQUEST['post'], $firstFieldName);
+                $order = RCCWP_CustomField::GetOrderDuplicates($_REQUEST['post'],$firstFieldName);
+
+                //if ($duplicates < 1) $duplicates = 1;//for backward compatability
                 ?> 
                 <div class="write_panel_wrapper"  id="write_panel_wrap_<?php echo $customGroup->id;?>"><?php
                 
                 //build the group duplicates 
-				for($i= 1 ;$i<=$duplicates;$i++){
-        
-                        if($customGroup->name != "__default"){
-                            //order the groups
-                            $order_id = $wpdb->get_var('select order_id from '.RC_CWP_TABLE_POST_META.' where post_id = '.$post->ID.' and group_count = '.$i.' limit 1');
-                        }else{
-                            $order_id = 1;
-                        }
-
+                foreach($order as $key => $element){
+				/*for($i= 1 ;$i<=$duplicates;$i++){
+                    if($customGroup->name != "__default"){
+                        //order the groups
+                        $order_id = $wpdb->get_var('select order_id from '.RC_CWP_TABLE_POST_META.' where post_id = '.$post->ID.' and group_count = '.$i.' limit 1');
+                    }else{
+                        $order_id = 1;
+                    }*/
                    ?>
-                    <?php RCCWP_WritePostPage::GroupDuplicate2($customGroup,$order_id,$i,false) ;?>
+                    <?php RCCWP_WritePostPage::GroupDuplicate2($customGroup,$element,$key,false);?>
                    <?php 
 				}
                 ?>
-                <input type='hidden' name='g<?php echo $customGroup->id?>counter' id='g<?php echo $customGroup->id?>counter' value='<?php echo $duplicates?>' />
+                <?php 
+                    //knowing what is the biggest duplicate group
+                    if(!empty($order)){
+                        $tmp =  $order;
+                        sort($tmp);
+                        $top = $tmp[count($tmp) -1];
+                    }else{
+                        $top = 0;
+                    }
+                ?>
+                <input type='hidden' name='g<?php echo $customGroup->id?>counter' id='g<?php echo $customGroup->id?>counter' value='<?php echo $top ?>' />
                 <input type="hidden" name="rc-custom-write-panel-verify-key" id="rc-custom-write-panel-verify-key" value="<?php echo wp_create_nonce('rc-custom-write-panel')?>" />
 		        <input type="hidden" name="rc-cwp-custom-write-panel-id" value="<?php echo $CUSTOM_WRITE_PANEL->id?>" />
                 </div>
@@ -544,7 +555,7 @@ class RCCWP_WritePostPage {
      * @param boolean $fromAjax
      *
      */ 
-	function GroupDuplicate2($customGroup, $groupCounter,$orders = 0,$fromAjax=true){
+	function GroupDuplicate2($customGroup, $groupCounter,$order,$fromAjax=true){
 		global $flutter_domain;
              
         $counter = "";
@@ -570,7 +581,6 @@ class RCCWP_WritePostPage {
         }else{
             $title = $customGroup->name;
         }
-            
 		?>
 		<div id="freshpostdiv_group_<?php echo $customGroup->id.'_'.$groupCounter;?>" class="postbox1">	
             <div class="postbox">
@@ -580,36 +590,44 @@ class RCCWP_WritePostPage {
             <div class="inside">
 			<table class="form-table" style="width: 100%;" cellspacing="2" cellpadding="5">
 			    <?php	
-                    $index = 0;
 	        		foreach ($customFields as $field) {
-                        $index++;
-
 			            // Render a row for each field in the group
-            			$customField = RCCWP_CustomField::Get($field->id);
+            			//$customField = RCCWP_CustomField::Get($field->id);
+
 		        		$customFieldName = RC_Format::GetInputName(attribute_escape($field->name));
-        				$customFieldTitle = attribute_escape($customField->description);
+        				$customFieldTitle = attribute_escape($field->description);
                         $groupId  = $customGroup->id;
 		        		$inputName = $field->id."_".$groupCounter."_1_".$groupId."_".$customFieldName;
 
                         if(isset($_REQUEST['post'])){
                             $fc = RCCWP_CustomField::GetFieldDuplicates($_REQUEST['post'],$field->name,$groupCounter);
-                            if($fc < 1) $fc = 1;
-                            for($i = 1;$i <= $fc;$i++){
-                                RCCWP_WritePostPage::CustomFieldInterface($field->id,$groupCounter,$i,$customGroup->id); 
+                            $fields_order =  RCCWP_CustomField::GetFieldsOrder($_REQUEST['post'],$field->name);
+                            foreach($fields_order as $element){
+                            //if($fc < 1) $fc = 1;
+                            //for($i = 1;$i <= $fc;$i++){
+                                RCCWP_WritePostPage::CustomFieldInterface($field->id,$groupCounter,$element,$customGroup->id); 
                             }   
                         }else{
                             RCCWP_WritePostPage::CustomFieldInterface($field->id,$groupCounter,1,$customGroup->id);
                             $fc = 1;
                         }
 
-                    
+
+                    if(!empty($fields_order)){
+                        $tmp =  $fields_order;
+                        sort($tmp);
+                        $top = $tmp[count($tmp) -1];
+                    }else{
+                        $top = 1;
+                    }
+
                 ?>
                <tr style="display:none" id="<?php echo "c".$inputName."Duplicate"?>">
 					<th valign="top" scope="row">
 					</th>
 					<td>
 						<img class="duplicate_image"  src="<?php echo FLUTTER_URI; ?>images/spinner.gif" alt=""/> <?php _e('Loading', $flutter_domain); ?> ... 
-						<input type="text" name="c<?php echo $inputName ?>Counter" id="c<?php echo $inputName ?>Counter" value='<?php echo $fc ?>' /> 
+						<input type="text" name="c<?php echo $inputName ?>Counter" id="c<?php echo $inputName ?>Counter" value='<?php echo $top ?>' /> 
 					</td>
 			    </tr>
                 <?php } ?>
@@ -632,7 +650,7 @@ class RCCWP_WritePostPage {
 		    ?>
                 </div>
             </div> 
-            <input type="hidden" name="order_<?php echo $customGroup->id?>_<?php echo $groupCounter;?>" id="order_<?php echo $customGroup->id?>_<?php echo $groupCounter;?>" value="<?php echo $orders?>" />
+            <input type="hidden" name="order_<?php echo $customGroup->id?>_<?php echo $groupCounter;?>" id="order_<?php echo $customGroup->id?>_<?php echo $groupCounter;?>" value="<?php echo $order?>" />
         </div>
 		<?php
 	}
