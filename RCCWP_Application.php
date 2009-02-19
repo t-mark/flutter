@@ -63,9 +63,7 @@ class RCCWP_Application
 	}
 
 	function ContinueInstallation(){
-		//if (RCCWP_Application::IsWordpressMu()) {
 			RCCWP_Application::SetCaps();
-		//}
 	}
 
 	function SetCaps(){
@@ -161,7 +159,7 @@ class RCCWP_Application
 				field_count integer NOT NULL,
 				post_id integer NOT NULL,
 				field_name text NOT NULL,
-                order_id integer NOT NULL DEFAULT -1
+                order_id integer NOT NULL,
 				PRIMARY KEY (id) )" ;
 
             $blog_tables[] = "CREATE TABLE ". FLUTTER_TABLE_LAYOUT_MODULES ." (

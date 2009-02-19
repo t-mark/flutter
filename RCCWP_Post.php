@@ -78,7 +78,6 @@ class RCCWP_Post
             $index = 1;
 			foreach($customFieldKeys as $key=>$value)
 			{
-                Debug::log($fieldCounter);
 				list($customFieldId, $groupCounter, $fieldCounter, $groupId,$rawCustomFieldName) = split("_", $value, 5);
 				$arr[$key]->id = $customFieldId ;
 				$arr[$key]->gc = $groupCounter ;
@@ -198,7 +197,6 @@ class RCCWP_Post
 					
 						$finalValue=str_replace("\r\n","<br />",$finalValue);
 						$finalValue = "<p>" . str_replace("<br /><br />", "</p><p>", $finalValue) . "</p>";
-						Debug::log($finalValue);
 						//$finalValue = nl2br($finalValue);
 			}
     				// Add field value meta data

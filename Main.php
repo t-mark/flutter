@@ -112,9 +112,7 @@ if (is_admin()) {
 
 		// -- Hook all functions related to saving posts in order to save custom fields values
 		require_once ('RCCWP_Post.php');	
-		add_action('edit_post', array('RCCWP_Post', 'SaveCustomFields'));
 		add_action('save_post', array('RCCWP_Post', 'SaveCustomFields'));
-		add_action('publish_post', array('RCCWP_Post', 'SaveCustomFields'));
  		add_action('delete_post', array('RCCWP_Post','DeletePostMetaData')) ;
 		
 
