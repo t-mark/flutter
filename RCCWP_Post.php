@@ -189,10 +189,7 @@ class RCCWP_Post {
 					$fieldMetaID = $wpdb->insert_id;
 
 					// Add field extended properties
-                    Debug::log("INSERT INTO ". RC_CWP_TABLE_POST_META .
-								" (id, field_name, group_count, field_count, post_id,order_id) ".
-								" VALUES ($fieldMetaID, '$customFieldName', ".$key->gc.", ".$key->fc.", $postId,$order)");
-					$wpdb->query("INSERT INTO ". RC_CWP_TABLE_POST_META .
+        			$wpdb->query("INSERT INTO ". RC_CWP_TABLE_POST_META .
 								" (id, field_name, group_count, field_count, post_id,order_id) ".
 								" VALUES ($fieldMetaID, '$customFieldName', ".$key->gc.", ".$key->fc.", $postId,$order)");
 				}
